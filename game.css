@@ -9,3 +9,5 @@ button{transition:background .12s,transform .12s}dialog[open]{animation:dialog-i
 #stickThumb{position:absolute;left:calc(50% - 23px);top:calc(50% - 23px);width:46px;height:46px;border-radius:50%;border:1px solid #eadcff;background:#a391d599;box-shadow:0 0 18px #bea0ff66;pointer-events:none}
 @media(pointer:coarse),(max-width:640px){#joystick{display:block}.pad{display:none}}
 @media(prefers-reduced-motion:reduce){button{transition:none}dialog[open]{animation:none}}
+
+#paintedWorld{transition:background-image .8s ease}#concert{width:min(1000px,95vw)}#concertVideo{width:100%;max-height:65dvh;background:#000}#concertStart{margin-top:12px;background:#ab7090}#concertStart[hidden]{display:none}body[data-chapter="city"] .mission{background:linear-gradient(100deg,#11172ddd,#11172d22)}
