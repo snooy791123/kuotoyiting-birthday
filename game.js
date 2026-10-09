@@ -1,5 +1,5 @@
 import * as T from './three.module.js';
-import { facingFor, cameraDirection, damp, wrappedAngle, advanceVelocity, arrivalSpeed, stableFacing } from './locomotion.js';
+import { facingFor, cameraDirection, damp, wrappedAngle, advanceVelocity, arrivalSpeed, stableFacing } from './locomotion.js?v=motion-v4';
 const $=id=>document.getElementById(id),keys=new Set(),colors=[0x59a8ff,0xaf85ff,0xff83c8,0x6ee9b6,0xff727e];
 let renderer;try{renderer=new T.WebGLRenderer({canvas:$('world'),antialias:true,alpha:true});}catch(e){$('welcome').showModal();$('error').textContent='此裝置暫時無法顯示 3D 世界，請改用其他瀏覽器，或回到電影模式。';$('begin').disabled=true;throw e;}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=T.SRGBColorSpace;
