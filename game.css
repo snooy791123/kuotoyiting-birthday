@@ -12,3 +12,7 @@ button{transition:background .12s,transform .12s}dialog[open]{animation:dialog-i
 
 #paintedWorld{transition:background-image .8s ease}#concert{width:min(1000px,95vw)}#concertVideo{width:100%;max-height:65dvh;background:#000}#concertStart{margin-top:12px;background:#ab7090}#concertStart[hidden]{display:none}body[data-chapter="city"] .mission{background:linear-gradient(100deg,#11172ddd,#11172d22)}
 
+
+#paintedWorld{background:#11162e}#world{background:#11162e}#concertSong{width:min(100%,320px)}
+
+#storyFilm{width:min(920px,95vw)}#storyFilmVideo{width:100%;max-height:65dvh;background:#000}#storyFilmStart[hidden]{display:none}#storyFilmCaption,#concertCaption{min-height:2em;text-align:center;white-space:pre-line}
