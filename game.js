@@ -1,4 +1,5 @@
 import * as T from './three.module.js';
+import { facingFor, cameraDirection } from './locomotion.js';
 const $=id=>document.getElementById(id),keys=new Set(),colors=[0x59a8ff,0xaf85ff,0xff83c8,0x6ee9b6,0xff727e];
 let renderer;try{renderer=new T.WebGLRenderer({canvas:$('world'),antialias:true,alpha:true});}catch(e){$('welcome').showModal();$('error').textContent='此裝置暫時無法顯示 3D 世界，請改用其他瀏覽器，或回到電影模式。';$('begin').disabled=true;throw e;}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=T.SRGBColorSpace;
@@ -11,7 +12,7 @@ function artImage(id){const img=$(id);return new Promise((resolve,reject)=>{if(i
 let yitingAtlas,memberAtlas,walkAtlas;
 try{const images=await Promise.all([artImage('yitingArt'),artImage('membersArt'),artImage('walkArt')]);[yitingAtlas,memberAtlas,walkAtlas]=images.map(im=>{const t=new T.Texture(im);t.needsUpdate=true;return t;});$('begin').disabled=false;$('error').textContent='';}catch(e){$('error').textContent='插畫素材未能載入，請重新整理再試一次。';$('begin').disabled=true;throw e;}
 yitingAtlas.colorSpace=memberAtlas.colorSpace=walkAtlas.colorSpace=T.SRGBColorSpace;
-const memberRanges=[[0,335],[335,615],[615,905],[905,1245],[1245,1536]];
+const memberRanges=[[0,342],[342,626],[626,900],[900,1200],[1200,1536]];
 function frameTexture(atlas,left,right){const tex=atlas.clone();tex.repeat.set((right-left)/1536,1);tex.offset.set(left/1536,0);tex.needsUpdate=true;return tex;}
 const yitingViews=[0,1,2].map(i=>frameTexture(yitingAtlas,i*512,(i+1)*512));const rightView=yitingViews[1].clone();rightView.repeat.x=-1/3;rightView.offset.x=2/3;rightView.needsUpdate=true;
 // Eight distance-driven poses in each of three camera-facing directions.
@@ -20,8 +21,19 @@ const walkViews=Array.from({length:3},(_,row)=>Array.from({length:8},(_,col)=>{
 }));
 const walkRight=walkViews[2].map((t,col)=>{const r=t.clone();r.repeat.x=-1/8;r.offset.x=(col+1)/8;r.needsUpdate=true;return r;});
 const velocity=new T.Vector2();let travel=0,walking=false;
+// Blend adjacent distance-driven poses in premultiplied alpha, avoiding hard cuts.
+const gaitUniforms={nextMap:{value:walkViews[0][0]},nextTransform:{value:new T.Matrix3()},poseBlend:{value:0}};
+function smoothMaterial(){const m=new T.SpriteMaterial({map:yitingViews[2],transparent:true,alphaTest:.08,depthWrite:true});
+ m.onBeforeCompile=shader=>{Object.assign(shader.uniforms,gaitUniforms);
+ shader.vertexShader=shader.vertexShader.replace('void main() {','varying vec2 gaitUv;\nvoid main() {\ngaitUv=uv;');
+ shader.fragmentShader='uniform sampler2D nextMap;\nuniform mat3 nextTransform;\nuniform float poseBlend;\nvarying vec2 gaitUv;\n'+shader.fragmentShader;
+ shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`vec4 a=texture2D(map,vMapUv);vec4 b=texture2D(nextMap,(nextTransform*vec3(gaitUv,1.)).xy);
+ float alpha=mix(a.a,b.a,poseBlend);vec3 rgb=mix(a.rgb*a.a,b.rgb*b.a,poseBlend)/max(alpha,.0001);diffuseColor*=vec4(rgb,alpha);`);
+ };return m;}
+function setPose(a,b,blend){player.userData.sprite.material.map=a;b.updateMatrix();gaitUniforms.nextMap.value=b;gaitUniforms.nextTransform.value.copy(b.matrix);gaitUniforms.poseBlend.value=blend;}
+
 function character(index,isPlayer=false){const g=new T.Group();const tex=isPlayer?yitingViews[2]:frameTexture(memberAtlas,...memberRanges[index]);const sprite=new T.Sprite(new T.SpriteMaterial({map:tex,transparent:true,alphaTest:.45,depthWrite:true}));const height=isPlayer?3.25:3.55;sprite.center.set(.5,.02);sprite.scale.set(isPlayer?1.625:(memberRanges[index][1]-memberRanges[index][0])/1024*height,height,1);g.add(sprite);g.userData={sprite,heading:Math.PI};return g;}
-const player=character(0,true);scene.add(player);player.position.set(0,0,8);
+const player=character(0,true);player.userData.sprite.material.dispose();player.userData.sprite.material=smoothMaterial();scene.add(player);player.position.set(0,0,8);
 const floor=new T.Mesh(new T.PlaneGeometry(60,88),new T.MeshBasicMaterial({color:0xe0c8ff,transparent:true,opacity:.035,depthWrite:false}));floor.rotation.x=-Math.PI/2;floor.position.set(0,-.06,-20);scene.add(floor);
 function label(text,color='#e6deff'){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.fillStyle=color;ctx.font='32px Microsoft JhengHei, sans-serif';ctx.textAlign='center';ctx.fillText(text,256,75);const tex=new T.CanvasTexture(c);const s=new T.Sprite(new T.SpriteMaterial({map:tex,depthTest:true}));s.scale.set(5,1.25,1);return s;}
 const stops=[
@@ -52,7 +64,7 @@ $('world').onpointerdown=e=>{drag={id:e.pointerId,x:e.clientX};$('world').setPoi
 addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{keys.clear();if(document.hidden&&started&&!paused)togglePause();});
 function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}addEventListener('resize',resize);resize();updateHUD();
 function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-lastTime)/1000,.05);lastTime=now;const moving=started&&!paused&&!$('conversation').open&&!document.hidden;let x=0,z=0;if(moving){x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0);z=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);if(x||z){autoWalk=false;$('route').textContent='沿星光前往';}if(autoWalk){const target=stops[Math.min(step,6)],dx=target.x-player.position.x,dz=target.z-player.position.z,d=Math.hypot(dx,dz);if(d<2.3){autoWalk=false;$('route').textContent='沿星光前往';}else{x=(dx*Math.cos(yaw)-dz*Math.sin(yaw))/d;z=(dz*Math.cos(yaw)+dx*Math.sin(yaw))/d;}}const len=Math.hypot(x,z);if(len){x/=len;z/=len;}
- const wanted=new T.Vector2((x*Math.cos(yaw)+z*Math.sin(yaw))*3,(z*Math.cos(yaw)-x*Math.sin(yaw))*3);
+ const direction=cameraDirection(x,z,yaw);const wanted=new T.Vector2(direction.x*3,direction.z*3);
  const change=wanted.clone().sub(velocity),limit=(len?7:11)*dt;
  if(change.length()>limit)change.setLength(limit);velocity.add(change);
  const oldX=player.position.x,oldZ=player.position.z;
@@ -65,11 +77,12 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-lastTime
 
 const target=stops[Math.min(step,6)],distance=Math.hypot(player.position.x-target.x,player.position.z-target.z);near=distance<3.2;const disabled=!near||paused;if($('talk').disabled!==disabled)$('talk').disabled=disabled;const talkLabel=near?'與 '+target.name+' 交談':'靠近 '+target.name;if($('talk').textContent!==talkLabel)$('talk').textContent=talkLabel;$('distance').textContent=paused?'旅程已暫停':step===7?'五道星光，一個只屬於妳的夜晚。':target.name+' · '+Math.round(distance)+' 公尺';
 const cp=new T.Vector3(player.position.x+Math.sin(yaw)*7,player.position.y+3.3,player.position.z+Math.cos(yaw)*7);camera.position.lerp(cp,1-Math.exp(-dt*6));camera.lookAt(player.position.x,3.0,player.position.z);lanterns.forEach((l,i)=>{l.rotation.y=now*.001;l.position.y=3.85+Math.sin(now*.0015+i)*.12;});const angle=Math.atan2(Math.sin(player.userData.heading-yaw),Math.cos(player.userData.heading-yaw));
-const view=Math.abs(angle)>2.35?2:Math.abs(angle)<.78?0:1;
-const sprite=player.userData.sprite;const pose=Math.floor((travel/2.7%1)*8);
-if(walking){const row=view===2?0:view===0?1:2;sprite.material.map=row===2&&angle<0?walkRight[pose]:walkViews[row][pose];sprite.scale.x=1.625;sprite.position.y=.05;}
-else{sprite.material.map=view===1&&angle<0?rightView:yitingViews[view];sprite.scale.x=1.625;sprite.position.y=0;}
-$('world').dataset.motion=walking?'walking':'idle';$('world').dataset.walkFrame=String(pose);
+const facing=facingFor(angle),view=facing.view;
+const sprite=player.userData.sprite,phase=(travel/2.7%1)*8,pose=Math.floor(phase),fraction=phase-pose;
+if(walking){const frames=facing.mirror?walkRight:walkViews[facing.row];setPose(frames[pose],frames[(pose+1)%8],fraction*fraction*(3-2*fraction));sprite.position.y=.05;}
+else{const idle=facing.mirror?rightView:yitingViews[view];setPose(idle,idle,0);sprite.position.y=0;}
+sprite.scale.x=1.625;
+$('world').dataset.motion=walking?'walking':'idle';$('world').dataset.walkFrame=String(pose);$('world').dataset.facing=facing.name;
 $('paintedWorld').style.backgroundPosition=`${50+Math.sin(yaw)*9}% center`;
 renderer.render(scene,camera);}
 camera.position.set(0,3.3,15);requestAnimationFrame(frame);
