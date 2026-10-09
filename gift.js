@@ -22,3 +22,21 @@ cards.forEach(([name,img,text])=>{
  card.onclick=()=>{card.setAttribute('aria-pressed',String(card.classList.toggle('flipped')));$('giftText').textContent=name+'｜'+text;};
  item.append(card,window.assetDownloads('assets/downloads/'+img+'.jpg',name+'-生日小卡.jpg','保存小卡'));$('cards').append(item);
 });
+const giftTabs=Array.from(document.querySelectorAll('.collection-tabs [role="tab"]'));
+function selectGiftSection(tab,updateHash=true){
+ giftTabs.forEach(item=>{const active=item===tab;item.setAttribute('aria-selected',String(active));item.tabIndex=active?0:-1;document.getElementById(item.getAttribute('aria-controls')).hidden=!active;});
+ if(updateHash)try{history.replaceState(null,'','#'+tab.id.slice(4));}catch{}
+}
+giftTabs.forEach((tab,index)=>{
+ tab.onclick=()=>selectGiftSection(tab);
+ tab.onkeydown=e=>{let next=index;if(e.key==='ArrowRight')next=(index+1)%giftTabs.length;else if(e.key==='ArrowLeft')next=(index+giftTabs.length-1)%giftTabs.length;else if(e.key==='Home')next=0;else if(e.key==='End')next=giftTabs.length-1;else return;e.preventDefault();selectGiftSection(giftTabs[next]);giftTabs[next].focus();};
+});
+if(giftTabs.length){const requested=giftTabs.find(tab=>tab.id==='tab-'+location.hash.slice(1));selectGiftSection(requested||giftTabs[0],false);}
+const viewer=$('cardViewer');
+if(viewer){
+ document.querySelectorAll('.card-item').forEach((item,index)=>{
+  const [name,img,text]=cards[index],detail=document.createElement('button');detail.className='card-detail';detail.textContent='放大查看 ↗';detail.setAttribute('aria-label','放大查看'+name+'小卡');
+  detail.onclick=()=>{if(typeof viewer.showModal!=='function'){window.open('assets/downloads/'+img+'.jpg','_blank','noopener');return;}$('cardViewerTitle').textContent=name+' / BIRTHDAY CARD';$('cardViewerImage').src='assets/'+img+'.webp';$('cardViewerImage').alt=name+'生日小卡';$('cardViewerWords').textContent=text;$('cardViewerSave').replaceChildren(window.assetDownloads('assets/downloads/'+img+'.jpg',name+'-生日小卡.jpg','保存小卡'));viewer.showModal();};item.append(detail);
+ });
+ $('closeCardViewer').onclick=()=>viewer.close();
+}
