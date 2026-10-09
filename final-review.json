@@ -1,0 +1,22 @@
+[
+  {
+    "test": "1440 fullscreen",
+    "enabled": true
+  },
+  {
+    "test": "1440 inventory",
+    "entries": 38
+  },
+  {
+    "test": "390 fullscreen",
+    "enabled": true
+  },
+  {
+    "test": "390 inventory",
+    "entries": 38
+  },
+  {
+    "test": "offline local HTML",
+    "passed": true
+  }
+]

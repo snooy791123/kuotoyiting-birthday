@@ -1,0 +1,82 @@
+[
+  {
+    "name": "1440: autoplay + duration",
+    "passed": true
+  },
+  {
+    "name": "1440: pause stable",
+    "passed": true
+  },
+  {
+    "name": "1440: chapter navigation",
+    "passed": true
+  },
+  {
+    "name": "1440: subtitle toggle",
+    "passed": true
+  },
+  {
+    "name": "1440: hand interaction pauses and resumes",
+    "passed": true
+  },
+  {
+    "name": "1440: wish interaction and safe saved text",
+    "passed": true
+  },
+  {
+    "name": "1440: gift music and original lyrics",
+    "passed": true
+  },
+  {
+    "name": "1440: audio unlock",
+    "passed": true
+  },
+  {
+    "name": "1440: end + replay",
+    "passed": true
+  },
+  {
+    "name": "1440: images load and no overflow/errors",
+    "passed": true
+  },
+  {
+    "name": "390: autoplay + duration",
+    "passed": true
+  },
+  {
+    "name": "390: pause stable",
+    "passed": true
+  },
+  {
+    "name": "390: chapter navigation",
+    "passed": true
+  },
+  {
+    "name": "390: subtitle toggle",
+    "passed": true
+  },
+  {
+    "name": "390: hand interaction pauses and resumes",
+    "passed": true
+  },
+  {
+    "name": "390: wish interaction and safe saved text",
+    "passed": true
+  },
+  {
+    "name": "390: gift music and original lyrics",
+    "passed": true
+  },
+  {
+    "name": "390: audio unlock",
+    "passed": true
+  },
+  {
+    "name": "390: end + replay",
+    "passed": true
+  },
+  {
+    "name": "390: images load and no overflow/errors",
+    "passed": true
+  }
+]
