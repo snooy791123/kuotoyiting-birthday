@@ -140,7 +140,7 @@ export function createYiTing(atlas=null,appearance={}){
   for(const [side,offset] of [['L',0],['R',.5]]){const f=footTarget(phase+offset),ik=solveLeg(byName.Hips.position.y-f.y,f.z);const thigh=byName[side+'Thigh'],shin=byName[side+'Shin'],foot=byName[side+'Foot'];
    thigh.rotation.x=T.MathUtils.lerp(thigh.rotation.x,ik.hip,weight);shin.rotation.x=T.MathUtils.lerp(shin.rotation.x,ik.knee,weight);foot.rotation.x=T.MathUtils.lerp(foot.rotation.x,ik.ankle+f.pitch,weight);byName[side+'Toe'].rotation.x=f.stance?Math.max(0,-f.z)*.25*weight:0;
   }
-  byName.Hair.rotation.x+=Math.sin(elapsed*3.5)*.012*(.3+weight);byName.Head.rotation.y=T.MathUtils.damp(byName.Head.rotation.y,0,8,dt);
+  byName.Hair.rotation.x=Math.sin(elapsed*3.5)*.012*(.3+weight);byName.Head.rotation.y=T.MathUtils.damp(byName.Head.rotation.y,0,8,dt);
   model.rotation.y+=Math.atan2(Math.sin(heading-model.rotation.y),Math.cos(heading-model.rotation.y))*(1-Math.exp(-dt*15));model.updateMatrixWorld(true);skeleton.update();
  }
  if(appearance.scale)model.scale.setScalar(appearance.scale);

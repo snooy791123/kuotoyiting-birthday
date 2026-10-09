@@ -1,5 +1,5 @@
 import * as T from './three.module.js';
-import {createYiTing} from './yiting-rig.js?v=world3d-v1';
+import {createYiTing} from './yiting-rig.js?v=world3d-v2';
 
 export const CAST=[
  {member:'YEJUN',name:'藝俊',hair:0x192951,eyes:0x507ab1,coat:0x56769b,shirt:0xe4e8ef,scale:1.055,plaid:true},
@@ -28,13 +28,13 @@ export function createPerformer(index,{textures=true,atlas=null}={}){
  // avoiding one draw call for every finger and hair strand on mobile devices.
  batchRig(actor);
  // The microphone is an actual mesh attached to the hand bone.
- const mic=new T.Group();const body=new T.Mesh(new T.CylinderGeometry(.025,.027,.25,12),new T.MeshStandardMaterial({color:0x182031,metalness:.7,roughness:.3}));body.rotation.x=Math.PI/2;body.position.z=.11;mic.add(body);
- const grille=new T.Mesh(new T.SphereGeometry(.043,12,8),new T.MeshStandardMaterial({color:0x939eaf,metalness:.7,roughness:.45}));grille.position.z=.255;mic.add(grille);
- mic.position.set(0,-.08,.025);actor.userData.bones.RHand.add(mic);mic.visible=false;
+ const mic=new T.Group();const body=new T.Mesh(new T.CylinderGeometry(.025,.027,.16,12),new T.MeshStandardMaterial({color:0x182031,metalness:.7,roughness:.3}));body.rotation.x=Math.PI/2;body.position.z=.07;mic.add(body);
+ const grille=new T.Mesh(new T.SphereGeometry(.043,12,8),new T.MeshStandardMaterial({color:0x939eaf,metalness:.7,roughness:.45}));grille.position.z=.18;mic.add(grille);
+ mic.position.set(0,-.025,.02);actor.userData.bones.RHand.add(mic);mic.visible=false;
  const animate=actor.userData.update;let elapsed=index*.7;
  actor.userData.update=(dt,distance,speed,heading,singing=false)=>{
   animate(dt,distance,speed,heading);elapsed+=dt;mic.visible=singing;
-  if(singing){const b=actor.userData.bones;b.RUpperArm.rotation.x=-1.45;b.RUpperArm.rotation.z=.12;b.RForearm.rotation.x=-1.65;b.Chest.rotation.y+=Math.sin(elapsed*1.7)*.07;b.Head.rotation.z=Math.sin(elapsed*1.3)*.035;b.LForearm.rotation.x=-.2-Math.sin(elapsed*1.8)*.10;actor.updateMatrixWorld(true);actor.userData.skeleton.update();}
+  if(singing){const b=actor.userData.bones;b.RUpperArm.rotation.x=-1.55;b.RUpperArm.rotation.z=-.8;b.RForearm.rotation.x=-1.8;b.Chest.rotation.y=Math.sin(elapsed*1.7)*.07;b.Head.rotation.z=Math.sin(elapsed*1.3)*.035;b.LForearm.rotation.x=-.2-Math.sin(elapsed*1.8)*.10;actor.updateMatrixWorld(true);mic.lookAt(new T.Vector3(0,2.77,.25).applyMatrix4(actor.matrixWorld));actor.userData.skeleton.update();}
  };
  return actor;
 }
