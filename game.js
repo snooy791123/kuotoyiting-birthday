@@ -1,5 +1,5 @@
 import * as T from './three.module.js';
-import { facingFor, cameraDirection } from './locomotion.js';
+import { facingFor, cameraDirection, damp, wrappedAngle, advanceVelocity, arrivalSpeed, stableFacing } from './locomotion.js';
 const $=id=>document.getElementById(id),keys=new Set(),colors=[0x59a8ff,0xaf85ff,0xff83c8,0x6ee9b6,0xff727e];
 let renderer;try{renderer=new T.WebGLRenderer({canvas:$('world'),antialias:true,alpha:true});}catch(e){$('welcome').showModal();$('error').textContent='此裝置暫時無法顯示 3D 世界，請改用其他瀏覽器，或回到電影模式。';$('begin').disabled=true;throw e;}
 renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.outputColorSpace=T.SRGBColorSpace;
@@ -20,15 +20,17 @@ const walkViews=Array.from({length:3},(_,row)=>Array.from({length:8},(_,col)=>{
  const t=walkAtlas.clone();t.repeat.set(1/8,1/3);t.offset.set(col/8,(2-row)/3);t.needsUpdate=true;return t;
 }));
 const walkRight=walkViews[2].map((t,col)=>{const r=t.clone();r.repeat.x=-1/8;r.offset.x=(col+1)/8;r.needsUpdate=true;return r;});
-const velocity=new T.Vector2();let travel=0,walking=false;
+const velocity=new T.Vector2();let travel=0,walking=false;const touchKeys=new Map(),stick={x:0,z:0,pointer:null};
+function held(key){return keys.has(key)||Array.from(touchKeys.values()).includes(key);}
+function clearInput(){keys.clear();touchKeys.clear();stick.x=stick.z=0;stick.pointer=null;drag=null;document.querySelectorAll('.held').forEach(b=>b.classList.remove('held'));if($('stickThumb'))$('stickThumb').style.transform='translate(0,0)';}
 // Blend adjacent distance-driven poses in premultiplied alpha, avoiding hard cuts.
-const gaitUniforms={nextMap:{value:walkViews[0][0]},nextTransform:{value:new T.Matrix3()},poseBlend:{value:0}};
+const gaitUniforms={nextMap:{value:walkViews[0][0]},nextTransform:{value:new T.Matrix3()},poseBlend:{value:0},oldMap:{value:yitingViews[2]},oldTransform:{value:new T.Matrix3()},stateBlend:{value:1}};
 function smoothMaterial(){const m=new T.SpriteMaterial({map:yitingViews[2],transparent:true,alphaTest:.08,depthWrite:true});
  m.onBeforeCompile=shader=>{Object.assign(shader.uniforms,gaitUniforms);
  shader.vertexShader=shader.vertexShader.replace('void main() {','varying vec2 gaitUv;\nvoid main() {\ngaitUv=uv;');
- shader.fragmentShader='uniform sampler2D nextMap;\nuniform mat3 nextTransform;\nuniform float poseBlend;\nvarying vec2 gaitUv;\n'+shader.fragmentShader;
+ shader.fragmentShader='uniform sampler2D oldMap;\nuniform mat3 oldTransform;\nuniform float stateBlend;\nuniform sampler2D nextMap;\nuniform mat3 nextTransform;\nuniform float poseBlend;\nvarying vec2 gaitUv;\n'+shader.fragmentShader;
  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`vec4 a=texture2D(map,vMapUv);vec4 b=texture2D(nextMap,(nextTransform*vec3(gaitUv,1.)).xy);
- float alpha=mix(a.a,b.a,poseBlend);vec3 rgb=mix(a.rgb*a.a,b.rgb*b.a,poseBlend)/max(alpha,.0001);diffuseColor*=vec4(rgb,alpha);`);
+ float alpha=mix(a.a,b.a,poseBlend);vec3 rgb=mix(a.rgb*a.a,b.rgb*b.a,poseBlend)/max(alpha,.0001);vec4 old=texture2D(oldMap,(oldTransform*vec3(gaitUv,1.)).xy);float finalAlpha=mix(old.a,alpha,stateBlend);rgb=mix(old.rgb*old.a,rgb*alpha,stateBlend)/max(finalAlpha,.0001);diffuseColor*=vec4(rgb,finalAlpha);`);
  };return m;}
 function setPose(a,b,blend){player.userData.sprite.material.map=a;b.updateMatrix();gaitUniforms.nextMap.value=b;gaitUniforms.nextTransform.value.copy(b.matrix);gaitUniforms.poseBlend.value=blend;}
 
@@ -50,39 +52,67 @@ let last={x:0,z:8};stops.forEach(s=>{const d=Math.hypot(s.x-last.x,s.z-last.z);f
 // Illustrated cast stands beneath the painted castle stage.
 for(let i=0;i<5;i++){const p=character(i);p.position.set((i-2)*1.6,0,-51);scene.add(p);}
 const vertices=[];for(let i=0;i<1000;i++)vertices.push((Math.random()-.5)*160,6+Math.random()*65,(Math.random()-.5)*150-25);const geo=new T.BufferGeometry();geo.setAttribute('position',new T.Float32BufferAttribute(vertices,3));scene.add(new T.Points(geo,new T.PointsMaterial({color:0xcac0ff,size:.09})));
-let step=0,collected=[],started=false,paused=false,yaw=0,drag=null,lastTime=performance.now(),near=false,autoWalk=false;
+let step=0,collected=[],started=false,paused=false,yaw=0,yawTarget=0,drag=null,lastTime=performance.now(),near=false,autoWalk=false;
 try{const save=JSON.parse(localStorage.getItem('yiting-starlight-game-v1'));if(save&&Number.isInteger(save.step)&&save.step>=0&&save.step<=7){step=save.step;collected=stops.slice(0,step).filter(s=>s.star!==undefined).map(s=>s.star);const s=stops[Math.min(step,6)];player.position.set(s.x,0,s.z+5);}}catch{}
 function updateHUD(){const target=stops[Math.min(step,6)];$('task').textContent=step===7?stops[6].task:step===0?'走向銀虎，接受今晚的邀請。':stops[step-1].task;$('stars').replaceChildren();colors.forEach((c,i)=>{const el=document.createElement('span');el.className='star'+(collected.includes(i)?' found':'');el.style.color='#'+c.toString(16).padStart(6,'0');el.textContent='✦';el.title=['希望','溫柔','快樂','勇氣','陪伴'][i];$('stars').append(el);});lanterns.forEach((l,i)=>{l.visible=i>=step;stops[i].sign.visible=i>=step;});}
-function interact(){if(!near||paused||!started||$('conversation').open)return;keys.clear();autoWalk=false;$('route').textContent='沿星光前往';const s=stops[Math.min(step,6)];$('portrait').src=`assets/${s.img}.webp`;$('portrait').alt=s.name+'與 YiTing 的生日相遇';$('name').textContent=s.name;$('place').textContent=s.place;$('words').textContent=s.text;$('filmLink').hidden=step<6;$('continue').textContent=step>=6?'留在星光世界':step===0?'接受邀請，走進星光':'收下星光，繼續旅程';$('conversation').showModal();}
-$('route').onclick=()=>{autoWalk=!autoWalk;$('route').textContent=autoWalk?'停止引導':'沿星光前往';};$('restart').onclick=()=>{step=0;collected=[];player.position.set(0,0,8);player.userData.heading=Math.PI;velocity.set(0,0);travel=0;try{localStorage.removeItem('yiting-starlight-game-v1');}catch{}updateHUD();};$('talk').onclick=interact;$('continue').onclick=()=>{if(step<7){const s=stops[step];if(s.star!==undefined&&!collected.includes(s.star))collected.push(s.star);step++;try{localStorage.setItem('yiting-starlight-game-v1',JSON.stringify({step}));}catch{}updateHUD();}$('conversation').close();};$('conversation').addEventListener('cancel',e=>e.preventDefault());
-$('begin').onclick=()=>{started=true;$('welcome').close();lastTime=performance.now();};
-function togglePause(){paused=!paused;keys.clear();$('pause').textContent=paused?'繼續':'暫停';if(paused)$('bgm').pause();} $('pause').onclick=togglePause;
+function interact(){if(!near||paused||!started||$('conversation').open)return;clearInput();velocity.set(0,0);autoWalk=false;$('route').textContent='沿星光前往';const s=stops[Math.min(step,6)];$('portrait').src=`assets/${s.img}.webp`;$('portrait').alt=s.name+'與 YiTing 的生日相遇';$('name').textContent=s.name;$('place').textContent=s.place;$('words').textContent=s.text;$('filmLink').hidden=step<6;$('continue').textContent=step>=6?'留在星光世界':step===0?'接受邀請，走進星光':'收下星光，繼續旅程';$('conversation').showModal();}
+$('route').onclick=()=>{if(!started||paused||$('conversation').open)return;autoWalk=!autoWalk;$('route').textContent=autoWalk?'停止引導':'沿星光前往';};$('restart').onclick=()=>{step=0;collected=[];player.position.set(0,0,8);player.userData.heading=Math.PI;velocity.set(0,0);travel=0;yaw=yawTarget=0;clearInput();autoWalk=false;cameraAnchor.set(0,0,8);try{localStorage.removeItem('yiting-starlight-game-v1');}catch{}updateHUD();};$('talk').onclick=interact;$('continue').onclick=()=>{if(step<7){const s=stops[step];if(s.star!==undefined&&!collected.includes(s.star))collected.push(s.star);step++;try{localStorage.setItem('yiting-starlight-game-v1',JSON.stringify({step}));}catch{}updateHUD();}$('conversation').close();};$('conversation').addEventListener('cancel',e=>e.preventDefault());
+$('begin').onclick=()=>{clearInput();started=true;$('welcome').close();lastTime=performance.now();};
+function togglePause(){paused=!paused;clearInput();velocity.set(0,0);$('pause').textContent=paused?'繼續':'暫停';if(paused)$('bgm').pause();} $('pause').onclick=togglePause;
 $('music').onclick=()=>{const a=$('bgm');if(a.paused)a.play().then(()=>$('music').textContent='關閉音樂').catch(()=>$('music').textContent='再點一次播放');else{a.pause();$('music').textContent='開啟音樂';}};
 addEventListener('keydown',e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();if(e.repeat)return;if(e.key.toLowerCase()==='e')interact();else if(e.key.toLowerCase()==='p'&&started&&!$('conversation').open)togglePause();else keys.add(e.key.toLowerCase());});addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
-document.querySelectorAll('[data-key]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);keys.add(b.dataset.key.toLowerCase());};for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,()=>keys.delete(b.dataset.key.toLowerCase()));});
-$('world').onpointerdown=e=>{drag={id:e.pointerId,x:e.clientX};$('world').setPointerCapture(e.pointerId);};$('world').onpointermove=e=>{if(drag&&drag.id===e.pointerId){yaw-=(e.clientX-drag.x)*.006;drag.x=e.clientX;}};for(const ev of ['pointerup','pointercancel'])$('world').addEventListener(ev,()=>drag=null);
-addEventListener('blur',()=>keys.clear());document.addEventListener('visibilitychange',()=>{keys.clear();if(document.hidden&&started&&!paused)togglePause();});
+document.querySelectorAll('[data-key]').forEach(b=>{
+ b.onpointerdown=e=>{if(!started||paused||$('conversation').open)return;e.preventDefault();b.setPointerCapture(e.pointerId);touchKeys.set(e.pointerId,b.dataset.key.toLowerCase());b.classList.add('held');};
+ for(const ev of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(ev,e=>{touchKeys.delete(e.pointerId);b.classList.remove('held');});
+});
+const joystick=$('joystick');
+function moveStick(e){const r=joystick.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dz=e.clientY-r.top-r.height/2,max=r.width*.32,len=Math.hypot(dx,dz),scale=len>max?max/len:1;
+ const strength=Math.min(len/max,1);stick.x=strength<.12?0:dx/Math.max(len,1)*strength;stick.z=strength<.12?0:dz/Math.max(len,1)*strength;
+ $('stickThumb').style.transform=`translate(${dx*scale}px,${dz*scale}px)`;
+}
+joystick.onpointerdown=e=>{if(!started||paused||$('conversation').open||stick.pointer!==null)return;e.preventDefault();stick.pointer=e.pointerId;joystick.setPointerCapture(e.pointerId);joystick.classList.add('held');moveStick(e);};
+joystick.onpointermove=e=>{if(e.pointerId===stick.pointer)moveStick(e);};
+for(const ev of ['pointerup','pointercancel','lostpointercapture'])joystick.addEventListener(ev,e=>{if(e.pointerId===stick.pointer){stick.pointer=null;stick.x=stick.z=0;joystick.classList.remove('held');$('stickThumb').style.transform='translate(0,0)';}});
+$('world').onpointerdown=e=>{if(!started||paused||$('conversation').open)return;drag={id:e.pointerId,x:e.clientX};$('world').setPointerCapture(e.pointerId);};
+$('world').onpointermove=e=>{if(drag&&drag.id===e.pointerId){yawTarget-=(e.clientX-drag.x)*.0045;drag.x=e.clientX;}};
+for(const ev of ['pointerup','pointercancel','lostpointercapture'])$('world').addEventListener(ev,e=>{if(drag?.id===e.pointerId)drag=null;});
+addEventListener('blur',clearInput);document.addEventListener('visibilitychange',()=>{clearInput();if(document.hidden&&started&&!paused)togglePause();});
+const cameraAnchor=player.position.clone(),cameraOffset=new T.Vector3();let previousFacing=null,poseState='',stateTime=1,lastPose=yitingViews[2];
 function resize(){renderer.setSize(innerWidth,innerHeight,false);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}addEventListener('resize',resize);resize();updateHUD();
-function frame(now){requestAnimationFrame(frame);const dt=Math.min((now-lastTime)/1000,.05);lastTime=now;const moving=started&&!paused&&!$('conversation').open&&!document.hidden;let x=0,z=0;if(moving){x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0);z=(keys.has('s')||keys.has('arrowdown')?1:0)-(keys.has('w')||keys.has('arrowup')?1:0);if(x||z){autoWalk=false;$('route').textContent='沿星光前往';}if(autoWalk){const target=stops[Math.min(step,6)],dx=target.x-player.position.x,dz=target.z-player.position.z,d=Math.hypot(dx,dz);if(d<2.3){autoWalk=false;$('route').textContent='沿星光前往';}else{x=(dx*Math.cos(yaw)-dz*Math.sin(yaw))/d;z=(dz*Math.cos(yaw)+dx*Math.sin(yaw))/d;}}const len=Math.hypot(x,z);if(len){x/=len;z/=len;}
- const direction=cameraDirection(x,z,yaw);const wanted=new T.Vector2(direction.x*3,direction.z*3);
- const change=wanted.clone().sub(velocity),limit=(len?7:11)*dt;
- if(change.length()>limit)change.setLength(limit);velocity.add(change);
- const oldX=player.position.x,oldZ=player.position.z;
- player.position.x=T.MathUtils.clamp(oldX+velocity.x*dt,-21,21);
- player.position.z=T.MathUtils.clamp(oldZ+velocity.y*dt,-54,13);
- const moved=Math.hypot(player.position.x-oldX,player.position.z-oldZ);travel+=moved;
- walking=moved>.0005;
- if(walking){const desired=Math.atan2(velocity.x,velocity.y);const turn=Math.atan2(Math.sin(desired-player.userData.heading),Math.cos(desired-player.userData.heading));player.userData.heading+=turn*(1-Math.exp(-dt*12));}
- }else{velocity.set(0,0);walking=false;}
+function frame(now){requestAnimationFrame(frame);const dt=Math.min(Math.max((now-lastTime)/1000,0),.1);lastTime=now;
+ const moving=started&&!paused&&!$('conversation').open&&!document.hidden;
+ if(moving){yaw=damp(yaw,yawTarget,14,dt);let x=(held('d')||held('arrowright')?1:0)-(held('a')||held('arrowleft')?1:0)+stick.x,z=(held('s')||held('arrowdown')?1:0)-(held('w')||held('arrowup')?1:0)+stick.z;
+ if(x||z){if(autoWalk){autoWalk=false;$('route').textContent='沿星光前往';}}
+ let speed=3;
+ if(autoWalk){const target=stops[Math.min(step,6)],dx=target.x-player.position.x,dz=target.z-player.position.z,d=Math.hypot(dx,dz);speed=arrivalSpeed(d);
+ if(d<2.22&&velocity.length()<.18){autoWalk=false;$('route').textContent='沿星光前往';speed=0;}
+ else{x=(dx*Math.cos(yaw)-dz*Math.sin(yaw))/Math.max(d,.001);z=(dz*Math.cos(yaw)+dx*Math.sin(yaw))/Math.max(d,.001);}}
+ const len=Math.hypot(x,z);if(len>1){x/=len;z/=len;}const direction=cameraDirection(x,z,yaw);
+ const count=Math.max(1,Math.ceil(dt/(1/120))),tick=dt/count;let moved=0;
+ for(let i=0;i<count;i++){advanceVelocity(velocity,direction.x*speed,direction.z*speed,tick);const oldX=player.position.x,oldZ=player.position.z;
+ player.position.x=T.MathUtils.clamp(oldX+velocity.x*tick,-21,21);player.position.z=T.MathUtils.clamp(oldZ+velocity.y*tick,-54,13);
+ if(player.position.x===oldX&&Math.abs(velocity.x)>.01)velocity.x=0;if(player.position.z===oldZ&&Math.abs(velocity.y)>.01)velocity.y=0;
+ moved+=Math.hypot(player.position.x-oldX,player.position.z-oldZ);}
+ travel+=moved;walking=moved>.0001&&velocity.length()>.035;
+ if(walking){const desired=Math.atan2(velocity.x,velocity.y);player.userData.heading+=wrappedAngle(desired-player.userData.heading)*(1-Math.exp(-dt*15));}
+ }
 
-const target=stops[Math.min(step,6)],distance=Math.hypot(player.position.x-target.x,player.position.z-target.z);near=distance<3.2;const disabled=!near||paused;if($('talk').disabled!==disabled)$('talk').disabled=disabled;const talkLabel=near?'與 '+target.name+' 交談':'靠近 '+target.name;if($('talk').textContent!==talkLabel)$('talk').textContent=talkLabel;$('distance').textContent=paused?'旅程已暫停':step===7?'五道星光，一個只屬於妳的夜晚。':target.name+' · '+Math.round(distance)+' 公尺';
-const cp=new T.Vector3(player.position.x+Math.sin(yaw)*7,player.position.y+3.3,player.position.z+Math.cos(yaw)*7);camera.position.lerp(cp,1-Math.exp(-dt*6));camera.lookAt(player.position.x,3.0,player.position.z);lanterns.forEach((l,i)=>{l.rotation.y=now*.001;l.position.y=3.85+Math.sin(now*.0015+i)*.12;});const angle=Math.atan2(Math.sin(player.userData.heading-yaw),Math.cos(player.userData.heading-yaw));
-const facing=facingFor(angle),view=facing.view;
-const sprite=player.userData.sprite,phase=(travel/2.7%1)*8,pose=Math.floor(phase),fraction=phase-pose;
-if(walking){const frames=facing.mirror?walkRight:walkViews[facing.row];setPose(frames[pose],frames[(pose+1)%8],fraction*fraction*(3-2*fraction));sprite.position.y=.05;}
-else{const idle=facing.mirror?rightView:yitingViews[view];setPose(idle,idle,0);sprite.position.y=0;}
-sprite.scale.x=1.625;
-$('world').dataset.motion=walking?'walking':'idle';$('world').dataset.walkFrame=String(pose);$('world').dataset.facing=facing.name;
+const target=stops[Math.min(step,6)],distance=Math.hypot(player.position.x-target.x,player.position.z-target.z);near=distance<3.2;const disabled=!near||paused;if($('talk').disabled!==disabled)$('talk').disabled=disabled;const talkLabel=near?'與 '+target.name+' 交談':'靠近 '+target.name;if($('talk').textContent!==talkLabel)$('talk').textContent=talkLabel;const distanceLabel=paused?'旅程已暫停':step===7?'五道星光，一個只屬於妳的夜晚。':target.name+' · '+Math.round(distance)+' 公尺';if($('distance').textContent!==distanceLabel)$('distance').textContent=distanceLabel;
+if(moving){cameraAnchor.lerp(player.position,1-Math.exp(-dt*14));}
+ cameraOffset.set(Math.sin(yaw)*7,3.3,Math.cos(yaw)*7);camera.position.copy(cameraAnchor).add(cameraOffset);camera.lookAt(cameraAnchor.x,3,cameraAnchor.z);
+ lanterns.forEach((l,i)=>{if(!moving)return;l.rotation.y=now*.001;l.position.y=3.85+Math.sin(now*.0015+i)*.12;});
+ const angle=wrappedAngle(player.userData.heading-yaw),facing=stableFacing(angle,previousFacing);previousFacing=facing;
+ const sprite=player.userData.sprite,phase=(travel/2.7%1)*8,pose=Math.floor(phase),fraction=phase-pose;
+ if(moving||!started){const state=facing.name+':'+walking;
+ if(state!==poseState){gaitUniforms.oldMap.value=lastPose;lastPose.updateMatrix();gaitUniforms.oldTransform.value.copy(lastPose.matrix);stateTime=0;poseState=state;}
+ stateTime=Math.min(1,stateTime+dt/.16);gaitUniforms.stateBlend.value=stateTime*stateTime*(3-2*stateTime);
+ if(walking){const frames=facing.mirror?walkRight:walkViews[facing.row];setPose(frames[pose],frames[(pose+1)%8],fraction*fraction*(3-2*fraction));lastPose=frames[fraction<.5?pose:(pose+1)%8];}
+ else{const idle=facing.mirror?rightView:yitingViews[facing.view];setPose(idle,idle,0);lastPose=idle;}
+ sprite.position.y=damp(sprite.position.y,walking?.05:0,18,dt);
+ }
+ sprite.scale.x=1.625;
+ $('world').dataset.motion=!moving&&started?'frozen':walking?'walking':'idle';$('world').dataset.walkFrame=String(pose);$('world').dataset.facing=facing.name;
+ $('world').dataset.speed=velocity.length().toFixed(2);$('world').dataset.paused=String(paused);$('world').dataset.position=`${player.position.x.toFixed(2)},${player.position.z.toFixed(2)}`;
 $('paintedWorld').style.backgroundPosition=`${50+Math.sin(yaw)*9}% center`;
 renderer.render(scene,camera);}
 camera.position.set(0,3.3,15);requestAnimationFrame(frame);
