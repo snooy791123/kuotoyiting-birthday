@@ -1,7 +1,7 @@
 import * as T from './three.module.js';
-import {createPerformer,batchRig} from './plave-3d.js?v=world3d-v2';
-import {createWorld3D} from './world-3d.js?v=world3d-v2';
-import { createYiTing } from './yiting-rig.js?v=world3d-v2';
+import {createPerformer,batchRig} from './plave-3d.js?v=world3d-v3';
+import {createWorld3D} from './world-3d.js?v=world3d-v3';
+import { createYiTing } from './yiting-rig.js?v=world3d-v3';
 import { facingFor, cameraDirection, damp, wrappedAngle, advanceVelocity, arrivalSpeed, stableFacing } from './locomotion.js?v=motion-v4';
 const $=id=>document.getElementById(id),keys=new Set(),colors=[0x59a8ff,0xaf85ff,0xff83c8,0x6ee9b6,0xff727e];
 let renderer;try{renderer=new T.WebGLRenderer({canvas:$('world'),antialias:true,alpha:true});}catch(e){$('welcome').showModal();$('error').textContent='此裝置暫時無法顯示 3D 世界，請改用其他瀏覽器，或回到電影模式。';$('begin').disabled=true;throw e;}
@@ -63,7 +63,7 @@ $('paintedWorld').style.backgroundImage='none';
 $('chapterTitle').textContent=city?'10:20 PM / CITY':'10:20 PM / ASTERUM';
 $('task').textContent=step===stops.length?stops[lastStep].task:step===0?'從霓虹街道出發，查看 10:20 PM 的手機訊息。':stops[step-1].task;
 $('stars').replaceChildren();colors.forEach((c,i)=>{const el=document.createElement('span');el.className='star'+(collected.includes(i)?' found':'');el.style.color='#'+c.toString(16).padStart(6,'0');el.textContent='✦';el.title=['希望','溫柔','快樂','勇氣','陪伴'][i];$('stars').append(el);});
-lanterns.forEach((l,i)=>{const visible=i===Math.min(step,lastStep)&&step<stops.length;l.visible=visible;stops[i].sign.visible=visible;stops[i].ring.visible=visible;if(stops[i].actor)stops[i].actor.visible=!city&&i<=step;});
+lanterns.forEach((l,i)=>{const visible=i===Math.min(step,lastStep)&&step<stops.length;l.visible=visible;stops[i].sign.visible=visible;stops[i].ring.visible=visible;if(stops[i].actor)stops[i].actor.visible=!city&&i<=step&&step<lastStep;});
 routeDots.forEach(({dot,city:isCity,index})=>dot.visible=isCity===city&&index===step);
 stageCast.forEach(p=>p.visible=step>=lastStep);
 }
@@ -146,5 +146,7 @@ $('storyFilmClose').onclick=closeStoryFilm;$('storyFilm').addEventListener('canc
 $('storyFilmStart').onclick=()=>{const segments=[[8,15],[15,20.5],[20.5,31.5],[31.5,38.5]],clip=segments[Math.min(step,3)];playStoryFilm(clip[0],clip[1],stops[Math.min(step,lastStep)].place);};
 storyFilm.addEventListener('timeupdate',()=>{const sub=window.STORY.subtitles.find(s=>storyFilm.currentTime>=s.start&&storyFilm.currentTime<s.end);$('storyFilmCaption').textContent=sub?.text||'';if(storyFilm.currentTime>=storyFilmEnd)closeStoryFilm();});
 storyFilm.addEventListener('ended',closeStoryFilm);
+
+
 
 

@@ -54,11 +54,11 @@ export function createWorld3D({textures={}}={}){
  }
  const colors=[0x59a8ff,0xaf85ff,0xff83c8,0x6ee9b6,0xff727e],locations=[[-10,-7],[10,-12],[-11,-23],[11,-30],[0,-39]],gardens=[];
  locations.forEach(([x,z],i)=>{const g=new T.Group();g.position.set(x,0,z);asterum.add(g);gardens.push(g);ring(g,colors[i],0,.055,0,3.4);for(let j=0;j<8;j++){const a=j/8*Math.PI*2;orb(g,colors[i],Math.cos(a)*3, .23,Math.sin(a)*3,.08,1.4);}
-  if(i===0){for(let j=0;j<9;j++){const a=j/9*Math.PI*2;orb(g,0x8cb9e6,Math.cos(a)*4,.55,Math.sin(a)*4,.23,.3);}screen(g,textTexture('HOPE','讓音樂陪妳前進'),0,3,-4.3,4,1.5);}
+  if(i===0){for(let j=0;j<9;j++){const a=j/9*Math.PI*2;orb(g,0x8cb9e6,Math.cos(a)*4,.55,Math.sin(a)*4,.23,.3);}screen(g,textTexture('HOPE','讓音樂陪妳前進'),-5.5,3,-4.3,3.4,1.3);}
   if(i===1){for(const side of [-1,1]){block(g,0x6b659e,side*3.8,2,-1,.12,4,.12);block(g,0x6b659e,side*3.8,2,-5,.12,4,.12);}const arch=ring(g,0xb9a2ee,0,3.6,-4,3,true);arch.scale.y=.6;}
   if(i===2){for(let j=0;j<5;j++){const a=j/5*Math.PI*2;const o=new T.Mesh(new T.OctahedronGeometry(.23),mat(colors[i],1));o.position.set(Math.cos(a)*3.7,2,Math.sin(a)*3.7);g.add(o);animated.push({object:o,kind:'float',phase:j});}}
   if(i===3){ring(g,0x72d0c6,0,.1,0,4.5);for(let j=0;j<12;j++){const a=j/12*Math.PI*2;block(g,0xa6bfd2,Math.cos(a)*4.7,.65,Math.sin(a)*4.7,.08,1.3,.08);}}
-  if(i===4){for(const side of [-1,1])block(g,0xa57695,side*3, .45,-2,1.8,.2,.55);screen(g,textTexture('WITH YOU','銀虎 · 一直陪伴妳'),0,3,-4.4,5,1.5);}
+  if(i===4){for(const side of [-1,1])block(g,0xa57695,side*3, .45,-2,1.8,.2,.55);screen(g,textTexture('WITH YOU','銀虎 · 一直陪伴妳'),-6,3,-4.4,3.4,1.3);}
  });
  // The castle and stage are geometry, rather than a backdrop image.
  const castle=new T.Group();castle.position.z=-60;asterum.add(castle);
@@ -102,4 +102,5 @@ export function createWorld3D({textures={}}={}){
  function groundHeight(x,z){return current<4?(Math.abs(x)>5.7?.065:0):(z< -47.5&&Math.abs(x)<8.5?.08:0);}
  setChapter(0);return {root,city,asterum,occluders,boxes,setChapter,update,constrain,groundHeight,references:SCENE_REFERENCES};
 }
+
 
