@@ -1,0 +1,17 @@
+{
+  "id": "./",
+  "name": "YITING · 10.20｜穿越星光，只為遇見妳",
+  "short_name": "YITING 10.20",
+  "description": "生日電影、電影互動漫畫、小說漫畫與生日收藏。",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#101a30",
+  "theme_color": "#101a30",
+  "icons": [
+    {"src":"assets/app-icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"assets/app-icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"assets/app-icon-maskable.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ]
+}
