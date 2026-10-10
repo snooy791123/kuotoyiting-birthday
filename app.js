@@ -41,12 +41,13 @@ const songDuration=$('songDuration');
 const birthdaySongMessage=(message)=>{songNotice.textContent=message};
 function syncBirthdayLyrics(){
 const original=$('lyrics'),translated=$('lyricsZh'),track=birthdayTracks[selectedBirthdayTrack];
-if(selectedBirthdayTrack===0&&window.BIRTHDAY_LYRICS?.first){
-if(!original.dataset.fullLyrics){
-const sections=window.BIRTHDAY_LYRICS.first;
+const lyricKey=['first','second','third'][selectedBirthdayTrack];
+if(window.BIRTHDAY_LYRICS?.[lyricKey]){
+if(original.dataset.fullLyrics!==lyricKey){
+const sections=window.BIRTHDAY_LYRICS[lyricKey];
 original.textContent=sections.map(([heading,lines])=>'【'+heading+'】\n'+lines.map(pair=>pair[0]+(pair[1]?'\n'+pair[1]:'')).join('\n\n')).join('\n\n');
 translated.textContent='';
-original.dataset.fullLyrics='true';
+original.dataset.fullLyrics=lyricKey;
 }
 }else{
 original.textContent='♪ '+track.title+' ♪';
