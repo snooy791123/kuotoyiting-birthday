@@ -39,24 +39,11 @@ const songProgress=$('songProgress');
 const songTime=$('songTime');
 const songDuration=$('songDuration');
 const birthdaySongMessage=(message)=>{songNotice.textContent=message};
-// Estimated cue timings based on track duration and lyric structure; not verified transcription.
+// User-supplied cue start times; shared with the gift player.
 const lyricKeys=['first','second','third'];
-const lyricTimings=[
-{start:5,end:176,sections:[15,35,19,39,35,19,39,15]},
-{start:4,end:59,sections:[12,24,19]},
-{start:5,end:67,sections:[37,18,7]}
-];
-const lyricCues=lyricKeys.map((key,i)=>{
-const sections=window.BIRTHDAY_LYRICS?.[key]||[];
-const timing=lyricTimings[i],weights=sections.map((section,j)=>timing.sections[j]||section[1].length*4);
-const total=weights.reduce((a,b)=>a+b,0);let t=timing.start;
-return sections.flatMap(([heading,lines],j)=>{
-const length=(timing.end-timing.start)*weights[j]/total;
-const lineWeights=lines.map(([ko])=>Math.max(2.5,ko.length/13));
-const sum=lineWeights.reduce((a,b)=>a+b,0);let local=t;
-const cues=lines.map(([ko,zh],k)=>{const duration=length*lineWeights[k]/sum;const cue={start:local,end:local+duration,ko,zh,heading};local+=duration;return cue});
-t+=length;return cues;
-});
+const lyricCues=lyricKeys.map(key=>{
+const rows=window.BIRTHDAY_TIMED_LYRICS?.[key]||[];let heading='Intro';
+return rows.map(([start,section,ko,zh],i)=>{if(section)heading=section;return {start,end:i+1<rows.length?rows[i+1][0]:Infinity,heading,ko,zh};});
 });
 let lastLyricKey='';
 function syncBirthdayLyrics(){
