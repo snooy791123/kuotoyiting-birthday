@@ -12,3 +12,5 @@
 @media(min-width:601px){.panels.star-quest .panel.scene-opening{grid-column:1/-1}}
 
 .pager{position:static;margin-top:12px}
+
+.tracks .theme-song-choice{grid-column:1/-1}

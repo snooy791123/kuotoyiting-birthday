@@ -7,7 +7,7 @@ $('saveWish').onclick=()=>{
  catch{setStatus('作者不會收到妳的願望。此瀏覽器無法儲存，請先複製留念。');}
 };
 $('bookSize').onclick=()=>{const enlarged=document.querySelector('.novel').classList.toggle('large-print');$('bookSize').textContent=enlarged?'標準字體':'放大字體';};
-const tracks=[{src:'assets/song.m4a',name:'너라는_별빛'},{src:'assets/moon-night.m4a',name:'10월의 밤｜十月的夜晚'}];
+const tracks=[{src:'assets/song.m4a',name:'너라는_별빛'},{src:'assets/moon-night.m4a',name:'10월의 밤｜十月的夜晚'},{src:'assets/ten-twenty-star.m4a',name:'열 시 이십 분의 별｜十點二十分的星'}];
 let selectedTrack=0,userPaused=false;
 const musicButtons=[$('listen'),$('novelListen')];
 function musicStatus(text){document.querySelectorAll('.music-status').forEach(el=>el.textContent=text);}
