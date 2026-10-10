@@ -15,3 +15,5 @@ body.album-edition{background:var(--paper);color:var(--paper-ink);font-family:'M
 
 /* Keep landscape novel artwork fully visible in collectible cards */
 body.album-edition.gift-page .story-photocard .card-front img{object-fit:contain;background:#192236}
+
+.music-heading{font-size:13px;flex-basis:100%}.gift-track-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}.gift-music .gift-track-choice{display:flex;align-items:center;gap:10px;text-align:left;padding:14px 12px;min-height:60px;background:#fffaf3;color:#22283b;border:1px solid #aaa3a0;border-radius:6px}.gift-track-choice small{font-size:11px;opacity:.7}.gift-track-choice span{font-size:14px;overflow-wrap:anywhere}.gift-music .gift-track-choice[aria-pressed="true"]{border-color:#9d405c;box-shadow:inset 0 0 0 1px #9d405c;background:#f9eaf0}.gift-track-choice[aria-pressed="true"] small{color:#9d405c;opacity:1}
