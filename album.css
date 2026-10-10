@@ -32,3 +32,6 @@ body.album-edition.gift-page .card-back>span:last-child{font-size:14px;line-heig
 .novel-comic-entry{background:#192236;color:#f5f1e9;padding:26px;margin:0 0 25px}.novel-comic-entry h2{font-size:24px;font-weight:400}.novel-comic-entry p{font-size:13px;line-height:1.8}.novel-comic-entry a{display:inline-block;color:#f5f1e9;border:1px solid #f5f1e955;min-height:44px;padding:12px 18px}
 
 .gift-track-list .theme-song-choice{grid-column:1/-1}
+
+.novel-comic-preview{display:block;margin:0 0 20px}.novel-comic-preview img{display:block;width:100%;height:auto;border-radius:3px}.selected-track-downloads{display:flex;gap:8px;flex-wrap:wrap;width:100%}.selected-track-downloads [hidden]{display:none!important}
+.album-edition .novel-comic-entry h2{color:#f5f0e8}

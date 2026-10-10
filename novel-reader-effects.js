@@ -11,8 +11,8 @@
   '相遇的時間也許很短，留下的陪伴卻可以很長。願妳握住的那點星光，照亮接下來的每段路。',
   '故事到了最後一頁，生活裡的星光才正要繼續。願妳往後的每一年，都有喜歡的事，也有喜歡自己的勇氣。'
  ];
- const wide=new Set(['novel-frozen-city','novel-return-wide','novel-concert-wide','novel-quiet-bridge','002','novel-portal','novel-crossing','novel-asterum-panorama','novel-asterum-view','novel-stage-lights','novel-portal-goodbye','novel-walk-forward','novel-bamby-dance']);
- const close=new Set(['novel-light-touch','novel-keepsake-closeup','novel-candle-closeup','novel-yejun-closeup','novel-bamby-closeup','novel-eunho-reassurance','novel-signal-closeup','novel-eunho-closeup','novel-audience-closeup','novel-star-closeup','novel-yejun-guitar','novel-noah-closeup','novel-hamin-closeup']);
+ const wide=new Set(['novel-greenhouse-wide','novel-frozen-city','novel-return-wide','novel-concert-wide','novel-quiet-bridge','002','novel-portal','novel-crossing','novel-asterum-panorama','novel-asterum-view','novel-stage-lights','novel-portal-goodbye','novel-walk-forward','novel-bamby-dance']);
+ const close=new Set(['novel-purple-star-detail','novel-light-touch','novel-keepsake-closeup','novel-candle-closeup','novel-yejun-closeup','novel-bamby-closeup','novel-eunho-reassurance','novel-signal-closeup','novel-eunho-closeup','novel-audience-closeup','novel-star-closeup','novel-yejun-guitar','novel-noah-closeup','novel-hamin-closeup']);
  let observer;
  function burst(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const area=document.querySelector('.chapter-surprise');area.querySelectorAll('.note-burst').forEach(e=>e.remove());for(let i=0;i<12;i++){const s=document.createElement('span');s.className='note-burst';s.textContent='✦';s.setAttribute('aria-hidden','true');const angle=Math.PI*2*i/12;s.style.setProperty('--burst-x',Math.cos(angle)*100+'px');s.style.setProperty('--burst-y',Math.sin(angle)*65+'px');s.style.setProperty('--burst-color',['#75aee2','#b68bd4','#d783a0','#85ab85','#cf6078'][i%5]);area.append(s);setTimeout(()=>s.remove(),1100);}}
  window.refreshComicAtmosphere=index=>{

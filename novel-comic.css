@@ -14,3 +14,5 @@
 .pager{position:static;margin-top:12px}
 
 .tracks .theme-song-choice{grid-column:1/-1}
+
+#downloadSong{display:inline-block;font-size:12px;line-height:1.7;margin-top:14px;overflow-wrap:anywhere}
