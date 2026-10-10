@@ -29,3 +29,12 @@
 #birthday textarea{box-sizing:border-box;width:100%;min-height:120px;border:1px solid #b9a5d155;border-radius:14px;padding:16px;background:#090d1b;color:#f8f4ff;font-size:16px}
 #birthday #saveWish,#birthday #resume{min-height:48px;border-radius:12px}
 @media(max-width:430px){#birthday{width:calc(100vw - 24px);max-height:calc(100dvh - 75px);padding:23px 19px;border-radius:22px}#birthday .birthday-player{padding:20px 14px}#birthday .birthday-track #listen{width:100%}#birthday .collection-title span{font-size:17px}}
+
+.birthday-song-list{display:grid;gap:8px;margin:16px 0}
+#birthday .birthday-song-choice{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:10px;width:100%;padding:13px 12px;border:1px solid #b7add038;border-radius:12px;background:#10172a;color:#e8e2f4;text-align:left;cursor:pointer}
+#birthday .birthday-song-choice span{color:#d5b982;font-size:12px}
+#birthday .birthday-song-choice strong{font-size:13px;font-weight:600;overflow-wrap:anywhere}
+#birthday .birthday-song-choice small{font-size:11px;color:#adaac1}
+#birthday .birthday-song-choice.active{border-color:#e3c58f;background:linear-gradient(110deg,#3c3148,#20283e);box-shadow:inset 3px 0 #e3c58f}
+.birthday-song-progress{display:flex;align-items:center;gap:10px;margin:16px 0 0;font-size:11px;color:#d5c7dd;font-variant-numeric:tabular-nums}
+#birthday #songProgress{min-width:0;flex:1;accent-color:#e3c58f;cursor:pointer}
