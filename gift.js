@@ -34,6 +34,10 @@ cards.push(
  ['星光來訊','novel-message-v2','願每一次熟悉的旋律，都能在妳疲憊時帶來力量。星光彼端，也有人惦記著妳。'],
  ['希望花園','novel-garden','希望妳不管走到哪裡，都能記得自己最初喜歡的事情。讓熱愛陪妳，走向新的每一天。']
 );
+cards.push(
+ ['十點二十分的奇蹟','novel-portal','準備好了嗎？這次，換我們來接妳。願妳的人生，也有意想不到的美好相遇。'],
+ ['月光裡的溫柔','novel-greenhouse','有時候，妳也可以不用那麼努力。累的時候，讓溫柔陪妳休息一下。願妳被好好珍惜。']
+);
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
  const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
