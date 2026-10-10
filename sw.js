@@ -1,4 +1,4 @@
-const CACHE='yiting-shell-v1';
+const CACHE='yiting-shell-v2';
 const local=path=>new URL(path,self.registration.scope).href;
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(['offline.html','assets/app-icon-192.png','assets/app-icon-512.png'].map(local))).then(()=>self.skipWaiting()));});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('yiting-shell-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim()));});
@@ -8,7 +8,7 @@ self.addEventListener('fetch',event=>{
  const eligible=request.mode==='navigate'||['style','script','image','font'].includes(request.destination);if(!eligible)return;
  event.respondWith((async()=>{
   const cache=await caches.open(CACHE);
-  try{const response=await fetch(request);if(response.ok){await cache.put(request,response.clone());const keys=await cache.keys();if(keys.length>60)await cache.delete(keys[3]);}return response;}
+  try{const response=await fetch(request);if(response.ok){await cache.put(request,response.clone());const keys=await cache.keys();if(keys.length>60){const protectedUrls=new Set(['offline.html','assets/app-icon-192.png','assets/app-icon-512.png'].map(local));const oldest=keys.find(item=>!protectedUrls.has(item.url));if(oldest)await cache.delete(oldest);}}return response;}
   catch{const stored=await cache.match(request);if(stored)return stored;if(request.mode==='navigate')return cache.match(local('offline.html'));return Response.error();}
  })());
 });
