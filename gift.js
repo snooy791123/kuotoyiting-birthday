@@ -46,7 +46,11 @@ cards.push(
  ['五道星光的心意','novel-five-stars','希望、溫柔、快樂、勇氣，還有陪伴，都送給妳。願妳把這五道星光，帶進新的一歲。'],
  ['驚喜送到妳面前','novel-cake','今天，是值得好好慶祝妳的一天。願妳的生活，有甜甜的驚喜，也有一直陪著妳的人。']
 );
-const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941]};
+cards.push(
+ ['星光彼端的訊號','novel-control-room','無論距離多遠，喜歡的旋律都會找到妳。願每一段等待，都有溫柔的回應。'],
+ ['只為妳的生日留言','novel-final-message','謝謝妳來到這個世界，也謝謝妳喜歡我們。願每年的十月二十日，妳都帶著笑容迎接新的一歲。']
+);
+const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941], "novel-control-room": [1536, 1024], "novel-final-message": [1672, 941]};
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
  const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.style.aspectRatio=cardDimensions[img].join(' / ');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
