@@ -30,6 +30,10 @@ cards.push(
  ['星光約定','novel-farewell','即使在不同的世界，那些陪伴過妳的時光也不會消失。明年，也要帶著笑容。'],
  ['帶著星光前行','novel-home','願妳回到日常之後，依然記得自己值得被好好慶祝。每一年，都有屬於妳的星光。']
 );
+cards.push(
+ ['星光來訊','novel-message','願每一次熟悉的旋律，都能在妳疲憊時帶來力量。星光彼端，也有人惦記著妳。'],
+ ['希望花園','novel-garden','希望妳不管走到哪裡，都能記得自己最初喜歡的事情。讓熱愛陪妳，走向新的每一天。']
+);
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
  const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
