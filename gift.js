@@ -7,11 +7,19 @@ $('saveWish').onclick=()=>{
  catch{setStatus('作者不會收到妳的願望。此瀏覽器無法儲存，請先複製留念。');}
 };
 $('bookSize').onclick=()=>{const enlarged=document.querySelector('.novel').classList.toggle('large-print');$('bookSize').textContent=enlarged?'標準字體':'放大字體';};
-song.onplay=()=>{$('listen').textContent='暫停生日歌曲';};
-song.onpause=()=>{$('listen').textContent='聽生日歌曲';};
-song.onended=()=>{$('listen').textContent='再聽一次生日歌曲';};
-$('listen').onclick=()=>{if(song.paused){song.muted=false;song.play().catch(()=>{$('lyrics').textContent='請再輕觸一次播放歌曲。';});}else song.pause();};
-song.ontimeupdate=()=>{const cue=((window.STORY&&window.STORY.lyrics)||[]).find(s=>song.currentTime>=s.start&&song.currentTime<s.end);$('lyrics').textContent=cue?cue.text:'';};
+const tracks=[{src:'assets/song.m4a',name:'生日歌曲'},{src:'assets/moon-night.m4a',name:'10월의 밤｜十月的夜晚'}];
+let selectedTrack=0,userPaused=false;
+const musicButtons=[$('listen'),$('novelListen')];
+function musicStatus(text){document.querySelectorAll('.music-status').forEach(el=>el.textContent=text);}
+function syncMusic(){musicButtons.forEach(button=>{button.textContent=song.paused?'播放歌曲':'暫停歌曲';button.setAttribute('aria-pressed',String(!song.paused));});document.querySelectorAll('.gift-track').forEach(select=>select.value=String(selectedTrack));}
+function playMusic(){song.muted=false;return song.play().then(()=>{musicStatus('正在播放：'+tracks[selectedTrack].name);}).catch(()=>musicStatus('輕觸「播放歌曲」，讓音樂陪妳。'));}
+song.onplay=syncMusic;song.onpause=syncMusic;
+song.onended=()=>{selectedTrack=(selectedTrack+1)%tracks.length;song.src=tracks[selectedTrack].src;syncMusic();playMusic();};
+musicButtons.forEach(button=>button.onclick=()=>{if(song.paused){userPaused=false;playMusic();}else{userPaused=true;song.pause();musicStatus('音樂已暫停');}});
+document.querySelectorAll('.gift-track').forEach(select=>select.onchange=()=>{selectedTrack=Number(select.value);song.pause();song.src=tracks[selectedTrack].src;userPaused=false;$('lyrics').textContent='';syncMusic();playMusic();});
+song.ontimeupdate=()=>{const cue=selectedTrack===0?((window.STORY&&window.STORY.lyrics)||[]).find(s=>song.currentTime>=s.start&&song.currentTime<s.end):null;$('lyrics').textContent=cue?cue.text:'';};
+song.onerror=()=>musicStatus('歌曲暫時無法載入，請重新整理或切換曲目。');
+syncMusic();
 document.addEventListener('visibilitychange',()=>{if(document.hidden)song.pause();});
 const cards=[['銀虎','022','希望每一天，妳都能笑得像今晚一樣。'],['藝俊','card-0000(1)','讓每一首歌，陪妳走向更好的明天。'],['諾亞','card-0000(5)','願妳的夢，永遠有光照著。'],['斑比','card-0000(3)','把快樂留給自己，也把勇氣留給夢想。'],['河玟','card-0000(4)','累的時候也沒關係，我們一直都在。'],['PLAVE','card-0000(2)','五道星光，一起祝妳生日快樂。']];
 cards.forEach(([name,img,text])=>{
@@ -25,6 +33,7 @@ cards.forEach(([name,img,text])=>{
 const giftTabs=Array.from(document.querySelectorAll('.collection-tabs [role="tab"]'));
 function selectGiftSection(tab,updateHash=true){
  giftTabs.forEach(item=>{const active=item===tab;item.setAttribute('aria-selected',String(active));item.tabIndex=active?0:-1;document.getElementById(item.getAttribute('aria-controls')).hidden=!active;});
+ if(tab.id==='tab-novel'&&!userPaused&&song.paused)playMusic();
  if(updateHash)try{history.replaceState(null,'','#'+tab.id.slice(4));}catch{}
 }
 giftTabs.forEach((tab,index)=>{
