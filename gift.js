@@ -54,7 +54,11 @@ cards.push(
  ['跨越星光的邀請','novel-crossing','願妳勇敢伸出手，迎接新的風景。那些不敢想像的美好，也值得向妳走來。'],
  ['為妳亮起的星空','novel-stage-lights','五道星光，都為妳亮起。願妳每次抬頭，都能看見希望；每個生日，都有值得期待的驚喜。']
 );
-const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941], "novel-control-room": [1536, 1024], "novel-final-message": [1672, 941], "novel-crossing": [1672, 941], "novel-stage-lights": [1672, 941]};
+cards.push(
+ ['初見星海的奇蹟','novel-asterum-view','願妳永遠保有看見新風景的好奇。世界很大，屬於妳的美好，也正在慢慢展開。'],
+ ['藏不住的等待','novel-welcome-teasing','有人一直在等妳，有人因妳而笑。願妳每次到來，都被溫柔迎接、被認真放在心上。']
+);
+const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941], "novel-control-room": [1536, 1024], "novel-final-message": [1672, 941], "novel-crossing": [1672, 941], "novel-stage-lights": [1672, 941], "novel-asterum-view": [1672, 941], "novel-welcome-teasing": [1672, 941]};
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
  const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.style.aspectRatio=cardDimensions[img].join(' / ');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
