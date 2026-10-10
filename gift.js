@@ -58,7 +58,11 @@ cards.push(
  ['初見星海的奇蹟','novel-asterum-view','願妳永遠保有看見新風景的好奇。世界很大，屬於妳的美好，也正在慢慢展開。'],
  ['藏不住的等待','novel-welcome-teasing','有人一直在等妳，有人因妳而笑。願妳每次到來，都被溫柔迎接、被認真放在心上。']
 );
-const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941], "novel-control-room": [1536, 1024], "novel-final-message": [1672, 941], "novel-crossing": [1672, 941], "novel-stage-lights": [1672, 941], "novel-asterum-view": [1672, 941], "novel-welcome-teasing": [1672, 941]};
+cards.push(
+ ['星光中的再見','novel-portal-goodbye','每一次告別，都是下一次相遇的開始。願星光守護妳，讓妳帶著溫柔與勇氣，走向下一段旅程。'],
+ ['帶著星光走向明天','novel-walk-forward','願妳的平凡日常，也有值得期待的小小美好。請記得，妳值得被愛，也值得被好好慶祝。']
+);
+const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941], "novel-control-room": [1536, 1024], "novel-final-message": [1672, 941], "novel-crossing": [1672, 941], "novel-stage-lights": [1672, 941], "novel-asterum-view": [1672, 941], "novel-welcome-teasing": [1672, 941], "novel-portal-goodbye": [1672, 941], "novel-walk-forward": [1672, 941]};
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
  const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.style.aspectRatio=cardDimensions[img].join(' / ');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
