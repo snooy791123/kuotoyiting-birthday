@@ -46,13 +46,14 @@ cards.push(
  ['五道星光的心意','novel-five-stars','希望、溫柔、快樂、勇氣，還有陪伴，都送給妳。願妳把這五道星光，帶進新的一歲。'],
  ['驚喜送到妳面前','novel-cake','今天，是值得好好慶祝妳的一天。願妳的生活，有甜甜的驚喜，也有一直陪著妳的人。']
 );
+const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941]};
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
- const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
- const front=document.createElement('span');front.className='card-front';const photo=document.createElement('img');photo.src='assets/'+img+'.webp';photo.alt=name+'生日小卡';photo.loading='lazy';const label=document.createElement('strong');label.textContent=name;front.append(photo,label);
+ const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.style.aspectRatio=cardDimensions[img].join(' / ');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
+ const front=document.createElement('span');front.className='card-front';const photo=document.createElement('img');photo.src='assets/'+img+'.webp';photo.alt=name+'生日小卡';photo.loading='lazy';const label=document.createElement('strong');label.textContent=name;front.append(photo);label.className='card-caption';
  const back=document.createElement('span');back.className='card-back';const star=document.createElement('span');star.textContent='✦';const words=document.createElement('span');words.textContent=text;back.append(star,words);card.append(front,back);
  card.onclick=()=>{card.setAttribute('aria-pressed',String(card.classList.toggle('flipped')));$('giftText').textContent=name+'｜'+text;};
- item.append(card,window.assetDownloads('assets/downloads/'+img+'.jpg',name+'-生日小卡.jpg','保存小卡'));$('cards').append(item);
+ item.append(card,label,window.assetDownloads('assets/downloads/'+img+'.jpg',name+'-生日小卡.jpg','保存小卡'));$('cards').append(item);
 });
 const giftTabs=Array.from(document.querySelectorAll('.collection-tabs [role="tab"]'));
 function selectGiftSection(tab,updateHash=true){

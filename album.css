@@ -17,3 +17,14 @@ body.album-edition{background:var(--paper);color:var(--paper-ink);font-family:'M
 body.album-edition.gift-page .story-photocard .card-front img{object-fit:contain;background:#192236}
 
 .music-heading{font-size:13px;flex-basis:100%}.gift-track-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%}.gift-music .gift-track-choice{display:flex;align-items:center;gap:10px;text-align:left;padding:14px 12px;min-height:60px;background:#fffaf3;color:#22283b;border:1px solid #aaa3a0;border-radius:6px}.gift-track-choice small{font-size:11px;opacity:.7}.gift-track-choice span{font-size:14px;overflow-wrap:anywhere}.gift-music .gift-track-choice[aria-pressed="true"]{border-color:#9d405c;box-shadow:inset 0 0 0 1px #9d405c;background:#f9eaf0}.gift-track-choice[aria-pressed="true"] small{color:#9d405c;opacity:1}
+
+/* Full bleed cards follow each original image aspect ratio */
+body.album-edition.gift-page .cards{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
+body.album-edition.gift-page .cards .photocard{height:auto;width:100%;display:block}
+body.album-edition.gift-page .card-front{padding:0;display:block;border:0;background:none}
+body.album-edition.gift-page .card-front img{display:block;width:100%;height:100%;aspect-ratio:auto;object-fit:contain;object-position:center;background:none}
+.card-caption{display:block;padding:12px 0 2px;font-size:12px;line-height:1.5;color:#343b4d;letter-spacing:.06em}
+body.album-edition.gift-page .card-back{padding:16px;display:flex;justify-content:center}
+body.album-edition.gift-page .card-back>span:first-child{font-size:24px;padding:0;margin:0 0 8px}
+body.album-edition.gift-page .card-back>span:last-child{font-size:14px;line-height:1.65;padding:0;max-width:32em}
+@media(max-width:600px){body.album-edition.gift-page .cards{grid-template-columns:1fr;gap:22px}body.album-edition.gift-page .card-back>span:last-child{font-size:14px}body.album-edition.gift-page .card-item .download-link,body.album-edition.gift-page .card-item .original-link{min-height:44px}.card-caption{font-size:13px}}
