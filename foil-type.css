@@ -1,0 +1,13 @@
+@font-face{font-family:'Invitation Bodoni';src:url('assets/fonts/BodoniModa.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Invitation Song';src:url('assets/fonts/invitation-chinese.ttf') format('truetype');font-weight:400;font-style:normal;font-display:swap}
+.foil-text{font-family:'Invitation Bodoni','Invitation Song','Songti TC','PMingLiU',serif;font-weight:400;font-synthesis:none;letter-spacing:.055em;line-height:1.65;color:#725330;background-image:linear-gradient(112deg,#56422c 0%,#84643f 23%,#54412e 45%,#94713e 52%,#5f4931 70%,#80613d 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.home-page .foil-text,.intro h1 .foil-text,.issue h1 .foil-text,.collection-intro .foil-text,.novel-comic-entry h2 .foil-text,body:has(#panels) main>h1 .foil-text{color:#efdfc7;background-image:linear-gradient(112deg,#c5ad8b 0%,#f7eddc 20%,#dfc9a9 43%,#fff7e9 52%,#dcc19b 70%,#f6e8d3 100%);filter:drop-shadow(0 1px 1px #0005)}
+.album-edition .jacket-copy h1{font-weight:400!important;font-family:'Invitation Bodoni',serif!important;letter-spacing:-.045em!important}
+.jacket-copy h1 .foil-text{letter-spacing:-.045em;line-height:1.05}
+.album-date .foil-text{letter-spacing:-.04em;line-height:1.15}
+.album-date>.foil-text{font-size:inherit!important}
+.album-date .foil-text>span{font-family:Arial,sans-serif;letter-spacing:.3em}
+.album-edition .issue h1,.album-edition .intro h1,#chapterTitle{font-weight:400!important;letter-spacing:.05em;line-height:1.65}
+.foil-text small{font-family:'Microsoft JhengHei',sans-serif;letter-spacing:normal}
+@media(max-width:760px){.home-page .jacket-copy h1{font-size:72px!important}.jacket-title .foil-text{font-size:21px}.issue h1 .foil-text{font-size:28px}.album-date .foil-text>span{font-size:9px}}
+@media(forced-colors:active){.foil-text{-webkit-text-fill-color:CanvasText;background:none;filter:none}}
