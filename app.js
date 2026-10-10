@@ -27,12 +27,48 @@ let lastSave=0;film.addEventListener('timeupdate',()=>{if(Math.abs(film.currentT
 if(new URLSearchParams(location.search).get('resume')==='1')film.addEventListener('loadedmetadata',()=>{try{const saved=Number(localStorage.getItem('yiting-film-progress'));if(Number.isFinite(saved)&&saved>0&&saved<story.duration-1){seek(saved);toast('已接續上次觀看進度');}}catch{}},{once:true});
 document.addEventListener('keydown',e=>{if($('birthday').open||['TEXTAREA','INPUT','BUTTON'].includes(document.activeElement.tagName))return;if(e.code==='Space'){e.preventDefault();$('play').click()}if(e.code==='ArrowRight')$('next').click();if(e.code==='ArrowLeft')$('prev').click()});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)pause()});render();
-song.onplay=()=>{$('listen').textContent='暫停歌曲 ❚❚';syncBirthdayLyrics()};song.onpause=()=>{$('listen').textContent='播放歌曲 ▶';syncBirthdayLyrics()};song.onended=()=>{$('listen').textContent='重新播放 ↻';syncBirthdayLyrics()};
-$('listen').onclick=()=>{if(song.paused){pause();song.muted=false;song.play().catch(()=>toast('請再輕觸一次播放歌曲。'))}else song.pause()};
-const lyricTranslations={
-'눈을 감아봐':'試著閉上雙眼','너만을 위한 세상이 열려':'只為妳而存在的世界正在展開','Run run into the light':'奔向那道光芒','별빛처럼 웃어줘':'願妳像星光一樣微笑','1995 October night':'1995 年十月的那個夜晚','We came just for you':'我們專程為妳而來','Happy birthday my star':'生日快樂，我的星星','This moment is yours':'這一刻專屬於妳','가장 빛나는 건 너야':'最閃耀的人就是妳','We will always be with you':'我們會一直陪伴著妳'};
-function syncBirthdayLyrics(){const original=$('lyrics'),translated=$('lyricsZh');if(!original||!translated)return;const t=song.currentTime;const cue=(story.lyrics||[]).find(item=>t>=item.start&&t<item.end);if(!cue){original.textContent=song.paused?'輕觸播放，讓歌詞隨旋律出現。':'♪ 星光繼續閃耀 ♪';translated.textContent=song.paused?'繁體中文翻譯將同步顯示在這裡。':'願今晚的祝福一直陪著妳。';return;}const lines=cue.text.replace(/♪/g,'').split('\n').map(line=>line.trim()).filter(Boolean);original.textContent=lines.join('\n');translated.textContent=lines.map(line=>lyricTranslations[line]||'').join('\n');}
+const birthdayTracks=[
+{title:'열 시 이십 분의 별',duration:182,src:'assets/ten-twenty-star.m4a',lyrics:[]},
+{title:'너라는 별빛',duration:62,src:'assets/birthday-02.m4a',lyrics:[]},
+{title:'월의 밤',duration:70,src:'assets/birthday-03.m4a',lyrics:[]}
+];
+let selectedBirthdayTrack=0;
+const songButtons=[...document.querySelectorAll('[data-song-index]')];
+const songNotice=$('birthdaySongNotice');
+const songProgress=$('songProgress');
+const songTime=$('songTime');
+const songDuration=$('songDuration');
+const birthdaySongMessage=(message)=>{songNotice.textContent=message};
+function syncBirthdayLyrics(){
+const original=$('lyrics'),translated=$('lyricsZh'),track=birthdayTracks[selectedBirthdayTrack];
+const cue=track.lyrics.find(item=>song.currentTime>=item.start&&song.currentTime<item.end);
+if(cue){original.textContent=cue.text;translated.textContent=cue.zh||'翻譯校對中';}
+else{original.textContent='♪ '+track.title+' ♪';translated.textContent='這首歌曲的逐句雙語歌詞正在校對中。';}
+songTime.textContent=fmt(song.currentTime||0);
+songProgress.value=Math.min(song.currentTime||0,Number(songProgress.max));
+}
+function selectBirthdayTrack(index){
+if(!birthdayTracks[index])return;
+song.pause();selectedBirthdayTrack=index;
+const track=birthdayTracks[index];
+song.src=track.src;song.load();
+$('currentSongTitle').textContent=track.title;
+$('currentSongSubtitle').textContent=String(index+1).padStart(2,'0')+' / 03 · '+fmt(track.duration);
+songProgress.max=track.duration;songProgress.value=0;
+songTime.textContent='00:00';songDuration.textContent=fmt(track.duration);
+songButtons.forEach((button,i)=>{button.classList.toggle('active',i===index);button.setAttribute('aria-pressed',String(i===index))});
+$('listen').textContent='播放歌曲 ▶';birthdaySongMessage('');
+syncBirthdayLyrics();
+}
+songButtons.forEach((button,i)=>button.addEventListener('click',()=>selectBirthdayTrack(i)));
+song.onplay=()=>{$('listen').textContent='暫停歌曲 ❚❚';syncBirthdayLyrics()};
+song.onpause=()=>{$('listen').textContent='播放歌曲 ▶';syncBirthdayLyrics()};
+song.onended=()=>{$('listen').textContent='重新播放 ↻';syncBirthdayLyrics()};
+song.onerror=()=>{birthdaySongMessage('這首歌的音訊尚未部署完成，請稍後再試。');$('listen').textContent='音訊待上傳'};
+$('listen').onclick=()=>{if(song.paused){film.pause();song.muted=false;song.play().catch(()=>birthdaySongMessage('目前無法播放這首歌曲，請確認音訊已上傳。'))}else song.pause()};
+songProgress.addEventListener('input',()=>{if(song.readyState>0){song.currentTime=Number(songProgress.value);syncBirthdayLyrics()}});
 song.ontimeupdate=syncBirthdayLyrics;song.onseeked=syncBirthdayLyrics;
+selectBirthdayTrack(0);
 if(document.modelContext?.registerTool){const lifecycle=new AbortController();try{Promise.resolve(document.modelContext.registerTool({name:'navigate_birthday_chapter',title:'前往生日電影章節',description:'前往指定章節並更新電影畫面；保留目前播放或暫停狀態。',inputSchema:{type:'object',properties:{chapter:{type:'integer',minimum:1,maximum:5}},required:['chapter'],additionalProperties:false},annotations:{readOnlyHint:false,untrustedContentHint:false},execute(input){if(!input||!Number.isInteger(input.chapter)||input.chapter<1||input.chapter>5||Object.keys(input).length!==1)throw new Error('chapter 必須為 1 到 5 的整數');seek(story.chapters[input.chapter-1]);return{chapter:input.chapter,time:film.currentTime,paused:film.paused}}},{signal:lifecycle.signal})).catch(()=>{});addEventListener('pagehide',()=>lifecycle.abort(),{once:true})}catch(e){}}
 
 const gameReturn=new URLSearchParams(location.search);if(gameReturn.get('chapter')==='5'&&gameReturn.get('gift')!=='1'){film.addEventListener('loadedmetadata',()=>{seek(story.chapters[4]);pause();},{once:true});}
