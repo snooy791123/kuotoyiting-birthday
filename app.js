@@ -39,23 +39,41 @@ const songProgress=$('songProgress');
 const songTime=$('songTime');
 const songDuration=$('songDuration');
 const birthdaySongMessage=(message)=>{songNotice.textContent=message};
+// Estimated cue timings based on track duration and lyric structure; not verified transcription.
+const lyricKeys=['first','second','third'];
+const lyricTimings=[
+{start:5,end:176,sections:[15,35,19,39,35,19,39,15]},
+{start:4,end:59,sections:[12,24,19]},
+{start:5,end:67,sections:[37,18,7]}
+];
+const lyricCues=lyricKeys.map((key,i)=>{
+const sections=window.BIRTHDAY_LYRICS?.[key]||[];
+const timing=lyricTimings[i],weights=sections.map((section,j)=>timing.sections[j]||section[1].length*4);
+const total=weights.reduce((a,b)=>a+b,0);let t=timing.start;
+return sections.flatMap(([heading,lines],j)=>{
+const length=(timing.end-timing.start)*weights[j]/total;
+const lineWeights=lines.map(([ko])=>Math.max(2.5,ko.length/13));
+const sum=lineWeights.reduce((a,b)=>a+b,0);let local=t;
+const cues=lines.map(([ko,zh],k)=>{const duration=length*lineWeights[k]/sum;const cue={start:local,end:local+duration,ko,zh,heading};local+=duration;return cue});
+t+=length;return cues;
+});
+});
+let lastLyricKey='';
 function syncBirthdayLyrics(){
-const original=$('lyrics'),translated=$('lyricsZh'),track=birthdayTracks[selectedBirthdayTrack];
-const lyricKey=['first','second','third'][selectedBirthdayTrack];
-if(window.BIRTHDAY_LYRICS?.[lyricKey]){
-if(original.dataset.fullLyrics!==lyricKey){
-const sections=window.BIRTHDAY_LYRICS[lyricKey];
-original.textContent=sections.map(([heading,lines])=>'【'+heading+'】\n'+lines.map(pair=>pair[0]+(pair[1]?'\n'+pair[1]:'')).join('\n\n')).join('\n\n');
-translated.textContent='';
-original.dataset.fullLyrics=lyricKey;
+const original=$('lyrics'),translated=$('lyricsZh');
+const index=selectedBirthdayTrack,cues=lyricCues[index]||[],time=song.currentTime||0;
+const cueIndex=cues.findIndex(c=>time>=c.start&&time<c.end);
+const cue=cueIndex>=0?cues[cueIndex]:null;
+const displayKey=index+':'+cueIndex;
+if(displayKey!==lastLyricKey){
+lastLyricKey=displayKey;
+original.textContent=cue?cue.ko:'♪ '+birthdayTracks[index].title+' ♪';
+translated.textContent=cue?(cue.zh||' '):'';
+const heading=$('lyricSection');if(heading)heading.textContent=cue?cue.heading:'INSTRUMENTAL';
+const count=$('lyricCount');if(count)count.textContent=cue?(cueIndex+1)+' / '+cues.length:'';
 }
-}else{
-original.textContent='♪ '+track.title+' ♪';
-translated.textContent='這首歌曲的逐句雙語歌詞正在校對中。';
-original.dataset.fullLyrics='';
-}
-songTime.textContent=fmt(song.currentTime||0);
-songProgress.value=Math.min(song.currentTime||0,Number(songProgress.max));
+songTime.textContent=fmt(time);
+songProgress.value=Math.min(time,Number(songProgress.max));
 }
 function selectBirthdayTrack(index){
 if(!birthdayTracks[index])return;
@@ -64,7 +82,7 @@ const track=birthdayTracks[index];
 song.src=track.src;song.load();
 $('currentSongTitle').textContent=track.title;
 $('currentSongSubtitle').textContent=String(index+1).padStart(2,'0')+' / 03 · '+fmt(track.duration);
-songProgress.max=track.duration;songProgress.value=0;
+lastLyricKey='';songProgress.max=track.duration;songProgress.value=0;
 songTime.textContent='00:00';songDuration.textContent=fmt(track.duration);
 songButtons.forEach((button,i)=>{button.classList.toggle('active',i===index);button.setAttribute('aria-pressed',String(i===index))});
 $('listen').textContent='播放歌曲 ▶';birthdaySongMessage('');
