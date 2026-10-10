@@ -7,7 +7,7 @@ $('saveWish').onclick=()=>{
  catch{setStatus('作者不會收到妳的願望。此瀏覽器無法儲存，請先複製留念。');}
 };
 $('bookSize').onclick=()=>{const enlarged=document.querySelector('.novel').classList.toggle('large-print');$('bookSize').textContent=enlarged?'標準字體':'放大字體';};
-const tracks=[{src:'assets/song.m4a',name:'너라는_별빛'},{src:'assets/moon-night.m4a',name:'10월의 밤｜十月的夜晚'},{src:'assets/ten-twenty-star.m4a',name:'열 시 이십 분의 별｜十點二十分的星'}];
+const tracks=[{src:'assets/ten-twenty-star.m4a',name:'열 시 이십 분의 별｜十點二十分的星'},{src:'assets/song.m4a',name:'너라는_별빛'},{src:'assets/moon-night.m4a',name:'10월의 밤｜十月的夜晚'}];
 let selectedTrack=0,userPaused=false;
 const musicButtons=[$('listen'),$('novelListen')];
 function musicStatus(text){document.querySelectorAll('.music-status').forEach(el=>el.textContent=text);}
@@ -17,7 +17,7 @@ song.onplay=syncMusic;song.onpause=syncMusic;
 song.onended=()=>{selectedTrack=(selectedTrack+1)%tracks.length;song.src=tracks[selectedTrack].src;syncMusic();playMusic();};
 musicButtons.forEach(button=>button.onclick=()=>{if(song.paused){userPaused=false;playMusic();}else{userPaused=true;song.pause();musicStatus('音樂已暫停');}});
 document.querySelectorAll('.gift-track-choice').forEach(button=>button.onclick=()=>{selectedTrack=Number(button.dataset.track);song.pause();song.src=tracks[selectedTrack].src;userPaused=false;$('lyrics').textContent='';syncMusic();playMusic();});
-song.ontimeupdate=()=>{const cue=selectedTrack===0?((window.STORY&&window.STORY.lyrics)||[]).find(s=>song.currentTime>=s.start&&song.currentTime<s.end):null;$('lyrics').textContent=cue?cue.text:'';};
+song.ontimeupdate=()=>{const cue=selectedTrack===1?((window.STORY&&window.STORY.lyrics)||[]).find(s=>song.currentTime>=s.start&&song.currentTime<s.end):null;$('lyrics').textContent=cue?cue.text:'';};
 song.onerror=()=>musicStatus('歌曲暫時無法載入，請重新整理或切換曲目。');
 syncMusic();
 document.addEventListener('visibilitychange',()=>{if(document.hidden)song.pause();});

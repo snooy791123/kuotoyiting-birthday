@@ -1,9 +1,9 @@
 const byId=id=>document.getElementById(id),chapters=window.NOVEL_TEXT,panels=window.NOVEL_PANELS;
-const music=byId('comicMusic'),tracks=['assets/song.m4a','assets/moon-night.m4a','assets/ten-twenty-star.m4a'];let track=0,userPaused=false,chapter=0;
+const music=byId('comicMusic'),tracks=['assets/ten-twenty-star.m4a','assets/song.m4a','assets/moon-night.m4a'];let track=0,userPaused=false,chapter=0;
 const starNames={blue:'希望',purple:'溫柔',pink:'快樂',green:'勇氣',red:'陪伴'},colors={blue:'#69b9ff',purple:'#b58aff',pink:'#ef8eb7',green:'#83bf83',red:'#ed7185'};let collected=[];
 try{collected=JSON.parse(localStorage.getItem('yiting-novel-comic-stars')||'[]');if(!Array.isArray(collected))collected=[];}catch{}
 function syncMusic(){byId('musicToggle').textContent=music.paused?(userPaused?'播放音樂':'音樂開啟 · 輕觸播放'):'暫停音樂';byId('musicToggle').setAttribute('aria-pressed',String(!userPaused));document.querySelectorAll('[data-track]').forEach(b=>b.setAttribute('aria-pressed',String(Number(b.dataset.track)===track)));}
-function play(){music.muted=false;music.play().then(()=>{byId('musicStatus').textContent='正在播放：'+['너라는_별빛','10월의 밤','열 시 이십 분의 별'][track];}).catch(()=>{byId('musicStatus').textContent='輕觸播放，讓音樂陪妳讀故事。';syncMusic();});}
+function play(){music.muted=false;music.play().then(()=>{byId('musicStatus').textContent='正在播放：'+['열 시 이십 분의 별','너라는_별빛','10월의 밤'][track];}).catch(()=>{byId('musicStatus').textContent='輕觸播放，讓音樂陪妳讀故事。';syncMusic();});}
 music.onplay=syncMusic;music.onpause=syncMusic;music.onended=()=>{track=(track+1)%tracks.length;music.src=tracks[track];syncMusic();play();};
 byId('musicToggle').onclick=()=>{if(music.paused){userPaused=false;play();}else{userPaused=true;music.pause();byId('musicStatus').textContent='音樂已暫停';}};
 document.querySelectorAll('[data-track]').forEach(button=>button.onclick=()=>{track=Number(button.dataset.track);music.src=tracks[track];userPaused=false;syncMusic();play();});
