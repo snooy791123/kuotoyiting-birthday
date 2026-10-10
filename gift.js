@@ -50,7 +50,11 @@ cards.push(
  ['星光彼端的訊號','novel-control-room','無論距離多遠，喜歡的旋律都會找到妳。願每一段等待，都有溫柔的回應。'],
  ['只為妳的生日留言','novel-final-message','謝謝妳來到這個世界，也謝謝妳喜歡我們。願每年的十月二十日，妳都帶著笑容迎接新的一歲。']
 );
-const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941], "novel-control-room": [1536, 1024], "novel-final-message": [1672, 941]};
+cards.push(
+ ['跨越星光的邀請','novel-crossing','願妳勇敢伸出手，迎接新的風景。那些不敢想像的美好，也值得向妳走來。'],
+ ['為妳亮起的星空','novel-stage-lights','五道星光，都為妳亮起。願妳每次抬頭，都能看見希望；每個生日，都有值得期待的驚喜。']
+);
+const cardDimensions={"022": [1672, 941], "card-0000(1)": [1672, 941], "card-0000(5)": [1672, 941], "card-0000(3)": [1672, 941], "card-0000(4)": [1672, 941], "card-0000(2)": [1672, 941], "novel-welcome": [1672, 941], "novel-red-star": [1672, 941], "novel-birthday-stage": [1672, 941], "novel-wish": [1672, 941], "novel-farewell": [1672, 941], "novel-home": [1672, 941], "novel-message-v2": [1672, 941], "novel-garden": [1672, 941], "novel-portal": [1672, 941], "novel-greenhouse": [1672, 941], "novel-bamby": [1672, 941], "novel-hamin": [1672, 941], "novel-five-stars": [1672, 941], "novel-cake": [1672, 941], "novel-control-room": [1536, 1024], "novel-final-message": [1672, 941], "novel-crossing": [1672, 941], "novel-stage-lights": [1672, 941]};
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
  const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.style.aspectRatio=cardDimensions[img].join(' / ');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
