@@ -38,3 +38,8 @@
 #birthday .birthday-song-choice.active{border-color:#e3c58f;background:linear-gradient(110deg,#3c3148,#20283e);box-shadow:inset 3px 0 #e3c58f}
 .birthday-song-progress{display:flex;align-items:center;gap:10px;margin:16px 0 0;font-size:11px;color:#d5c7dd;font-variant-numeric:tabular-nums}
 #birthday #songProgress{min-width:0;flex:1;accent-color:#e3c58f;cursor:pointer}
+
+.birthday-lyric-meta{display:flex;justify-content:space-between;gap:12px;margin:12px 0 0;font-size:10px;letter-spacing:.08em;color:#b5a8cc}
+#birthday .birthday-original{min-height:2.8em;display:grid;place-items:center;animation:lyricGlow .35s ease}
+#birthday .birthday-translation{min-height:2.4em}
+@keyframes lyricGlow{from{opacity:.65;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
