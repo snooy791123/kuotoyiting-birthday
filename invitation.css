@@ -1,0 +1,63 @@
+/* Invitation artwork is the shared cover; reading surfaces remain warm paper. */
+:root{--invitation-night:#101a30;--invitation-gold:#eee0c6;--invitation-red:#ca3e62}
+.journey-nav{display:none}
+.invitation-cover{display:none}
+body.home-page.album-edition{background:#101a30;color:#eee0c6;background-image:radial-gradient(ellipse at 80% 5%,#33336c80,transparent 55%)}
+.home-page.album-edition .wordmark,.home-page.album-edition .site-nav a,.home-page.album-edition .site-nav a[aria-current],.home-page.album-edition .home-header button{color:#eee0c6}
+.home-page.album-edition .dedication,.home-page .edition-topline,.home-page .contents-heading small,.home-page .album-item p,.home-page .album-colophon small,.home-page.album-edition .home-footer{color:#b7bbcf}
+.home-page .album-home{max-width:1380px;padding-top:18px}
+.home-page .album-jacket{display:block;min-height:0;border:1px solid #dccaa52b;box-shadow:0 30px 80px #0005;aspect-ratio:1578/996;background:#101a30}
+.home-page .invitation-cover{display:block;width:100%;height:100%;object-fit:contain}
+.home-page .jacket-art,.home-page .album-spine{display:none}
+.home-page .jacket-copy{position:absolute;inset:auto 0 2% 53%;padding:0 5%;background:none;border:0;text-align:center}
+.home-page .jacket-copy>.eyebrow,.home-page .jacket-copy h1,.home-page .album-date,.home-page .jacket-title,.home-page .jacket-note,.home-page .seal-mark{display:none}
+.home-page.album-edition .unbox-button{background:#101a30e8;color:#eee0c6;border:1px solid #eee0c680;border-radius:2px;letter-spacing:.1em;margin:0;box-shadow:0 8px 28px #0004}
+.home-page.album-edition .unbox-button:hover{background:#862e47}
+.home-page .continue-link{color:#f0c7d0}
+.home-page .album-items{grid-template-columns:repeat(4,minmax(0,1fr));gap:22px}
+.home-page .album-item h3,.home-page .album-item b{color:#eee0c6}
+.home-page .album-item>small{color:#e798ad}
+.home-page .contents-heading,.home-page .album-item,.home-page .album-colophon{border-color:#eee0c630}
+.home-page .album-colophon{background:linear-gradient(90deg,#101a30e6,#101a30b0),url('assets/novel-starlit-walk-wide.webp') center/cover;padding:32px}
+.home-page .opened{box-shadow:0 0 50px #ca3e6240}
+.home-page .opened .unbox-button{border-color:#e584a0}
+.album-edition.gift-page .collection-intro,.album-edition.comic-page .issue,.album-edition.film-page:not(.gift-page) .intro{background:linear-gradient(90deg,#101a30ef,#101a30b0),url('assets/novel-asterum-panorama.webp') center/cover;color:#eee0c6;padding:32px;border:1px solid #eee0c630}
+.album-edition.gift-page .collection-intro h1,.album-edition.gift-page .collection-intro p,.album-edition.comic-page .issue h1,.album-edition.film-page .intro h1,.album-edition.film-page .intro .subtitle{color:#eee0c6}
+.album-edition.gift-page .collection-intro{background-image:linear-gradient(90deg,#101a30f0,#101a30a0),url('assets/novel-birthday-plaza-wide.webp')}
+.card-filters{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+body.album-edition.gift-page .card-filters button{min-height:44px;padding:10px 16px;background:transparent;border:1px solid #22283b35;color:#343b4d;border-radius:3px;font:inherit;font-size:12px}
+body.album-edition.gift-page .card-filters button[aria-pressed=true]{background:#192236;color:#fff0dd;border-color:#ca3e62}
+.filter-status{font-size:12px;color:#6c6472;margin:16px 0 24px}
+.story-editions{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 24px}.story-editions a{display:block;min-height:44px;padding:13px 16px;text-decoration:none;border:1px solid #22283b30;font-size:12px;color:#31394b}.story-editions a[aria-current]{background:#192236;color:#eee0c6;border-color:#ca3e62}
+.card-item[hidden]{display:none!important}
+body:has(#panels) main>h1{padding:30px 26px;background:linear-gradient(90deg,#101a30ed,#101a3060),url('assets/novel-asterum-panorama.webp') center/cover;color:#eee0c6;border-left:3px solid #ca3e62}
+a:focus-visible,button:focus-visible{outline:2px solid #ca3e62;outline-offset:4px}
+@media(max-width:1000px) and (min-width:761px){.home-page .album-items{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+.journey-nav{position:fixed;z-index:20;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);background:#101a30f5;border-top:1px solid #eee0c630;padding:7px 10px calc(7px + env(safe-area-inset-bottom));backdrop-filter:blur(16px)}
+.journey-nav a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-height:48px;text-decoration:none;color:#b7bbcf;font-size:11px}
+.journey-nav a span{font-size:20px;line-height:1.1}
+.journey-nav a[aria-current]{color:#f0d9bd}.journey-nav a[aria-current] span{color:#e57798}
+.site-nav,.site-links{display:none!important}
+.home-page .album-home{padding:12px 16px 30px}
+.home-page .album-jacket{aspect-ratio:auto;display:flex;flex-direction:column;overflow:hidden}
+.home-page .invitation-cover{display:none}
+.home-page .jacket-art{display:block;order:0;padding:0;height:340px;background:#101a30}
+.home-page .jacket-art img{width:100%;height:100%;object-fit:cover;object-position:35% center}
+.home-page .jacket-art::after,.home-page .album-serial{display:none}
+.home-page .jacket-copy{position:relative;inset:auto;order:1;text-align:center;padding:28px 22px 32px;min-height:0;background:radial-gradient(ellipse at 50% 0,#35376580,transparent 80%)}
+.home-page .jacket-copy>.eyebrow,.home-page .jacket-copy h1,.home-page .album-date,.home-page .jacket-title{display:block}
+.home-page .jacket-copy>.eyebrow{color:#d9c6a8;font-size:9px;letter-spacing:.22em}
+.home-page .jacket-copy h1{font-size:68px;color:#eee0c6;margin:16px 0 12px}
+.home-page .album-date{font-size:36px;color:#eee0c6}.home-page .album-date span{display:block;font-size:9px;margin-top:12px;letter-spacing:.3em;color:#d9c6a8}
+.home-page .jacket-title{font-size:18px;margin:20px 0;line-height:1.7}
+.home-page .album-items{grid-template-columns:1fr;gap:24px}
+.home-page .contents-heading{align-items:start;flex-direction:column;gap:10px}
+.home-page .album-colophon{padding:24px 20px}
+.album-edition.gift-page .collection-intro,.album-edition.comic-page .issue,.album-edition.film-page:not(.gift-page) .intro{padding:26px 20px}
+.album-edition.comic-page .pager{bottom:calc(65px + env(safe-area-inset-bottom));padding-bottom:12px}
+.cinema-focus .journey-nav{display:none}
+.cinema-focus{padding-bottom:0}
+}
+@media(prefers-reduced-motion:no-preference){.home-page .opened .unbox-button{animation:inviteGlow .7s ease both}@keyframes inviteGlow{50%{box-shadow:0 0 30px #ca3e6280}}}
