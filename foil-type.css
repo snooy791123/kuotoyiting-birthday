@@ -11,3 +11,13 @@
 .foil-text small{font-family:'Microsoft JhengHei',sans-serif;letter-spacing:normal}
 @media(max-width:760px){.home-page .jacket-copy h1{font-size:72px!important}.jacket-title .foil-text{font-size:21px}.issue h1 .foil-text{font-size:28px}.album-date .foil-text>span{font-size:9px}}
 @media(forced-colors:active){.foil-text{-webkit-text-fill-color:CanvasText;background:none;filter:none}}
+
+/* Section headings and supporting notes keep independent text hierarchy. */
+body.album-edition.gift-page .collection-title{display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;margin:0 0 20px;padding:0 0 18px;border-bottom:1px solid #252c3d25}
+body.album-edition.gift-page .collection-title>span{display:block;font-size:clamp(23px,2.5vw,29px);line-height:1.6;font-weight:400;letter-spacing:.03em;max-width:100%;overflow-wrap:break-word}
+body.album-edition.gift-page .collection-title>small{display:block;font-family:'Microsoft JhengHei','PingFang TC',sans-serif;font-size:13px;font-weight:400;line-height:1.8;letter-spacing:.025em;color:#686b79;-webkit-text-fill-color:#686b79;background:none}
+.collection-title .foil-text{font-size:inherit;line-height:inherit;letter-spacing:inherit}
+.album-item h3{line-height:1.65}.album-item p{line-height:1.9}
+.book-tools{flex-wrap:wrap;gap:12px}.book-tools button{flex-shrink:0}
+.novel-comic-entry h2{line-height:1.7;margin:16px 0 12px}.novel-comic-entry p{margin:0 0 18px}
+@media(max-width:760px){body.album-edition.gift-page .collection-title{gap:8px;margin-bottom:18px}body.album-edition.gift-page .collection-title>span{font-size:23px}body.album-edition.gift-page .collection-title>small{font-size:13px}.collection-intro h1{line-height:1.4}.collection-intro p{margin-top:14px}.blessing-copy h2{line-height:1.7}.novel-comic-entry h2{font-size:23px}.book-tools{padding:16px}}
