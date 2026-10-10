@@ -8,6 +8,7 @@
 @media(prefers-reduced-motion:reduce){.panel.scene-visible,.scene-visible .bubble,.scene-visible .scene-spark,#chapterNote:not([hidden]),.note-burst{animation:none}.scene-spark{display:none}.panel{transition:none}}
 
 @media(min-width:601px){.panels.star-quest .panel{grid-column:auto}}
-.star-quest .panel:nth-child(-n+2){border-top:3px solid #69b9ff}.star-quest .panel:nth-child(n+3):nth-child(-n+4){border-top:3px solid #b58aff}.star-quest .panel:nth-child(n+5):nth-child(-n+6){border-top:3px solid #ef8eb7}.star-quest .panel:nth-child(n+7){border-top:3px solid #83bf83}
+.star-quest .panel[data-member=blue]{border-top:3px solid #69b9ff}.star-quest .panel[data-member=purple]{border-top:3px solid #b58aff}.star-quest .panel[data-member=pink]{border-top:3px solid #ef8eb7}.star-quest .panel[data-member=green]{border-top:3px solid #83bf83}
+@media(min-width:601px){.panels.star-quest .panel.scene-opening{grid-column:1/-1}}
 
 .pager{position:static;margin-top:12px}
