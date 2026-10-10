@@ -44,8 +44,8 @@ const original=$('lyrics'),translated=$('lyricsZh'),track=birthdayTracks[selecte
 if(selectedBirthdayTrack===0&&window.BIRTHDAY_LYRICS?.first){
 if(!original.dataset.fullLyrics){
 const sections=window.BIRTHDAY_LYRICS.first;
-original.textContent=sections.map(([heading,lines])=>'【'+heading+'】\n'+lines.map(pair=>pair[0]).join('\n')).join('\n\n');
-translated.textContent=sections.map(([heading,lines])=>'【'+heading+'】\n'+lines.map(pair=>pair[1]||'　').join('\n')).join('\n\n');
+original.textContent=sections.map(([heading,lines])=>'【'+heading+'】\n'+lines.map(pair=>pair[0]+(pair[1]?'\n'+pair[1]:'')).join('\n\n')).join('\n\n');
+translated.textContent='';
 original.dataset.fullLyrics='true';
 }
 }else{
