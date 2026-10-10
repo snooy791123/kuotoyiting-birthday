@@ -22,9 +22,17 @@ song.onerror=()=>musicStatus('歌曲暫時無法載入，請重新整理或切�
 syncMusic();
 document.addEventListener('visibilitychange',()=>{if(document.hidden)song.pause();});
 const cards=[['銀虎','022','希望每一天，妳都能笑得像今晚一樣。'],['藝俊','card-0000(1)','讓每一首歌，陪妳走向更好的明天。'],['諾亞','card-0000(5)','願妳的夢，永遠有光照著。'],['斑比','card-0000(3)','把快樂留給自己，也把勇氣留給夢想。'],['河玟','card-0000(4)','累的時候也沒關係，我們一直都在。'],['PLAVE','card-0000(2)','五道星光，一起祝妳生日快樂。']];
+cards.push(
+ ['初次相遇','novel-welcome','不管妳從哪裡來，星光都會為妳留一個位置。歡迎妳，來到我們的世界。'],
+ ['紅色星光','novel-red-star','願妳記得，妳也是很重要的人。把這顆紅色星光收好，疲憊時讓它陪著妳。'],
+ ['專屬舞台','novel-birthday-stage','今晚的每一道光、每一段旋律，都為妳亮起。願往後的日子，也有值得期待的驚喜。'],
+ ['生日願望','novel-wish','不用說出心裡的秘密。希望妳珍惜的人平安，也希望妳勇敢追尋喜歡的事。'],
+ ['星光約定','novel-farewell','即使在不同的世界，那些陪伴過妳的時光也不會消失。明年，也要帶著笑容。'],
+ ['帶著星光前行','novel-home','願妳回到日常之後，依然記得自己值得被好好慶祝。每一年，都有屬於妳的星光。']
+);
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
- const card=document.createElement('button');card.className='photocard';card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
+ const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
  const front=document.createElement('span');front.className='card-front';const photo=document.createElement('img');photo.src='assets/'+img+'.webp';photo.alt=name+'生日小卡';photo.loading='lazy';const label=document.createElement('strong');label.textContent=name;front.append(photo,label);
  const back=document.createElement('span');back.className='card-back';const star=document.createElement('span');star.textContent='✦';const words=document.createElement('span');words.textContent=text;back.append(star,words);card.append(front,back);
  card.onclick=()=>{card.setAttribute('aria-pressed',String(card.classList.toggle('flipped')));$('giftText').textContent=name+'｜'+text;};

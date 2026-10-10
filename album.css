@@ -12,3 +12,6 @@ body.album-edition{background:var(--paper);color:var(--paper-ink);font-family:'M
 
 /* Novel soundtrack and original story illustrations */
 .gift-music{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0;padding:18px;background:#e9e3da;border-radius:12px;color:#22283b}.gift-music label{font-size:13px}.gift-track{max-width:100%;min-height:44px;padding:8px 12px;border:1px solid #a8a3a0;border-radius:7px;background:#fffaf3;color:#22283b;font:inherit}.gift-music button{min-height:44px}.music-status{flex-basis:100%;margin:0}.novel-illustration{margin:32px 0}.novel-illustration img{display:block;width:100%;height:auto;border-radius:4px}.novel-illustration figcaption{font-size:13px;line-height:1.8;color:#5d5d68;margin-top:10px}.novel-illustration figcaption a{display:inline-block;margin-left:12px;color:#883e54}.novel-text .novel-illustration{max-width:100%}@media(max-width:600px){.gift-music{gap:10px;padding:14px}.gift-track{width:100%}.novel-illustration figcaption a{margin-left:0;display:block}}
+
+/* Keep landscape novel artwork fully visible in collectible cards */
+.story-photocard .card-front img{object-fit:contain;background:#192236}
