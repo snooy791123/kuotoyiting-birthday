@@ -38,6 +38,10 @@ cards.push(
  ['十點二十分的奇蹟','novel-portal','準備好了嗎？這次，換我們來接妳。願妳的人生，也有意想不到的美好相遇。'],
  ['月光裡的溫柔','novel-greenhouse','有時候，妳也可以不用那麼努力。累的時候，讓溫柔陪妳休息一下。願妳被好好珍惜。']
 );
+cards.push(
+ ['粉紅色的快樂','novel-bamby','以後也要多笑一點！願妳把快樂留給自己，讓喜歡的事物，陪妳度過每一個普通的日子。'],
+ ['星海裡的勇氣','novel-hamin','就算現在還看不見終點，也沒關係。只要繼續往前走就好了。願妳相信，自己一直在發光。']
+);
 cards.forEach(([name,img,text])=>{
  const item=document.createElement('div');item.className='card-item';
  const card=document.createElement('button');card.className='photocard'+(img.startsWith('novel-')?' story-photocard':'');card.setAttribute('aria-label',name+'小卡，翻面看祝福');card.setAttribute('aria-pressed','false');
