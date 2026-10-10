@@ -7,7 +7,7 @@ function play(){music.muted=false;music.play().then(()=>{byId('musicStatus').tex
 music.onplay=syncMusic;music.onpause=syncMusic;music.onended=()=>{track=(track+1)%tracks.length;music.src=tracks[track];syncMusic();play();};
 byId('musicToggle').onclick=()=>{if(music.paused){userPaused=false;play();}else{userPaused=true;music.pause();byId('musicStatus').textContent='音樂已暫停';}};
 document.querySelectorAll('[data-track]').forEach(button=>button.onclick=()=>{track=Number(button.dataset.track);music.src=tracks[track];userPaused=false;syncMusic();play();});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)music.pause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){music.pause();byId('musicStatus').textContent='已暫停：返回頁面後請輕觸播放。';}});
 chapters.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=c.title;byId('chapterSelect').append(o);});
 function starStatus(){byId('starStatus').textContent=collected.length?'已收藏 '+collected.filter(c=>starNames[c]).map(c=>starNames[c]).join('、')+' 星光。':'輕觸星光按鈕，收藏五份心意。';}
 function download(img){return 'assets/downloads/'+img+'.jpg';}
