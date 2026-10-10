@@ -41,9 +41,18 @@ const songDuration=$('songDuration');
 const birthdaySongMessage=(message)=>{songNotice.textContent=message};
 function syncBirthdayLyrics(){
 const original=$('lyrics'),translated=$('lyricsZh'),track=birthdayTracks[selectedBirthdayTrack];
-const cue=track.lyrics.find(item=>song.currentTime>=item.start&&song.currentTime<item.end);
-if(cue){original.textContent=cue.text;translated.textContent=cue.zh||'翻譯校對中';}
-else{original.textContent='♪ '+track.title+' ♪';translated.textContent='這首歌曲的逐句雙語歌詞正在校對中。';}
+if(selectedBirthdayTrack===0&&window.BIRTHDAY_LYRICS?.first){
+if(!original.dataset.fullLyrics){
+const sections=window.BIRTHDAY_LYRICS.first;
+original.textContent=sections.map(([heading,lines])=>'【'+heading+'】\n'+lines.map(pair=>pair[0]).join('\n')).join('\n\n');
+translated.textContent=sections.map(([heading,lines])=>'【'+heading+'】\n'+lines.map(pair=>pair[1]||'　').join('\n')).join('\n\n');
+original.dataset.fullLyrics='true';
+}
+}else{
+original.textContent='♪ '+track.title+' ♪';
+translated.textContent='這首歌曲的逐句雙語歌詞正在校對中。';
+original.dataset.fullLyrics='';
+}
 songTime.textContent=fmt(song.currentTime||0);
 songProgress.value=Math.min(song.currentTime||0,Number(songProgress.max));
 }
@@ -64,7 +73,7 @@ songButtons.forEach((button,i)=>button.addEventListener('click',()=>selectBirthd
 song.onplay=()=>{$('listen').textContent='暫停歌曲 ❚❚';syncBirthdayLyrics()};
 song.onpause=()=>{$('listen').textContent='播放歌曲 ▶';syncBirthdayLyrics()};
 song.onended=()=>{$('listen').textContent='重新播放 ↻';syncBirthdayLyrics()};
-song.onerror=()=>{birthdaySongMessage('這首歌的音訊尚未部署完成，請稍後再試。');$('listen').textContent='音訊待上傳'};
+song.onerror=()=>{birthdaySongMessage('這首歌曲暫時無法載入，請檢查網路後重試。');$('listen').textContent='重新播放 ▶'};
 $('listen').onclick=()=>{if(song.paused){film.pause();song.muted=false;song.play().catch(()=>birthdaySongMessage('目前無法播放這首歌曲，請確認音訊已上傳。'))}else song.pause()};
 songProgress.addEventListener('input',()=>{if(song.readyState>0){song.currentTime=Number(songProgress.value);syncBirthdayLyrics()}});
 song.ontimeupdate=syncBirthdayLyrics;song.onseeked=syncBirthdayLyrics;
